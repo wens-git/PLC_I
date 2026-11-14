@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-13",
+  "protocol_revision": "1.3",
+  "protocol_signature": "0x584A5633",
+  "python_tests": {"passed": 343, "subtests_passed": 28, "warnings": 2},
+  "frontend_tests": {"passed": 25, "build_passed": true},
+  "protocol": {"errors": 0, "holding_words": 32, "input_words": 1830},
+  "plc": {
+    "production_project": "plc/project/FM_XJV1_Cylinder_v13.project",
+    "rebuild_errors": 0, "rebuild_warnings": 0,
+    "code_generation_errors": 0, "code_generation_warnings": 0,
+    "source_files_hash_matched": 47,
+    "build_record": "plc/evidence/cylinder-upgrade-build-status.json",
+    "api_and_selftest_coverage_compilation": true,
+    "coverage_record": "plc/evidence/cylinder-api-coverage-status.json",
+    "iec_selftest_executed": false,
+    "real_plc_connected": false,
+    "downloaded_to_plc": false,
+    "physical_cylinders_bound": 0
+  },
+  "desktop": {
+    "source_smoke_passed": true,
+    "source_smoke_record": "artifacts/cylinder-desktop-smoke-5.json",
+    "packaged_smoke_passed": false,
+    "packaged_smoke_record": "artifacts/cylinder-package-data-final/desktop.log",
+    "packaged_smoke_blocker": "Executable cannot create per-user lock: Permission denied at LOCALAPPDATA/FM_GPTPRO/desktop.lock; ACL diagnostic NOT_THIS_CLASS, no permissions changed",
+    "acl_report": "artifacts/acl-recovery/acl-report-bb4a5fb5326d4e0b870c3c6c6158a89b.jsonl",
+    "mode": "mock only",
+    "original_app_backup": "artifacts/App-before-cylinder-v13",
+    "packaging_warnings": ["Optional tzdata hidden import not found", "Qt optional assetdownloader QML plugin binary absent"]
+  },
+  "limitations": [
+    "No real PLC or physical IO acceptance performed",
+    "IEC selftest was compiled with explicit API references but not executed",
+    "Physical wiring and actual module-ready feedback must be commissioned",
+    "Timing completion without sensors is not physical position or vacuum verification",
+    "Old protocol 1.2 PLC and upgraded application must not be mixed"
+  ]
+}

@@ -1,0 +1,39 @@
+OPEN ISOLATED SELFTEST
+DEVICE ScriptObject{ScriptDeviceObject, NoExplicitConnectorObject, NoSymbolConfigObject, NoLibManObject, ScriptNoProjectInfoMarker, NoScriptApplicationObject, ScriptNonTextualObject, ScriptExternalFileObjectContainer, NoTaskConfigObject, NoTaskObject, NoImagePoolObject, NoTextListObject, NoScriptApplicationComposerObject, NoScriptApplicationComposerObject}(Project=0, Name=Device, guid=0301f156-39bf-4058-9018-1263233cd641)
+SIMULATION VERIFIED True
+------ 开始构建应用程序 Device.Sim.Device.Application -------
+此应用程序是最新的
+生成代码...
+生成全局初始化...
+生成代码初始化...
+生成重定位...
+生成代码的大小:  1145732 字节
+全局数据的大小: 293843 字节
+为代码和数据分配的总内存大小: 1449520 字节
+内存区域0包含 输入, 输出 和 不安全行为：大小：1048576字节，最高使用的地址：295280，最大连续存储器间隙：753296字节（71％）
+内存区域2包含 持久性数据：大小：22144字节，最高使用的地址：18448，最大连续存储器间隙：3696字节（16％）
+内存区域3包含 代码：大小：1489472字节，最高使用的地址：1145736，最大连续存储器间隙：343736字节（23％）
+内存区域4包含 内存：大小：262144字节，最高使用的地址：262144，最大连续存储器间隙：0字节（0％）
+内存区域5包含 数据：大小：1048576字节，最高使用的地址：303784，最大连续存储器间隙：744792字节（71％）
+构建完整--0错误,0警告：准备下载
+SIMULATOR LOGGED IN True
+Done=TRUE
+Runtime.Done=TRUE
+Port.Done=TRUE
+AxisApi.Done=TRUE
+Passed=UDINT#61
+Runtime.Passed=UDINT#32
+Port.Passed=UDINT#13
+AxisApi.Passed=UDINT#20
+Failed=UDINT#0
+Runtime.Failed=UDINT#0
+Port.Failed=UDINT#0
+AxisApi.Failed=UDINT#0
+FirstFailure=UINT#0
+Runtime.FirstFailure=UINT#0
+Port.FirstFailure=UINT#0
+AxisApi.FirstFailure=UINT#0
+Port.Step=UINT#24
+Port.Diag1=WORD#534
+Port.Diag2=WORD#0
+SELFTEST PASS (non-persistent isolated simulator)

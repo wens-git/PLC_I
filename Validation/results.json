@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-09",
+  "repository_tests": {
+    "passed": 327,
+    "subtests_passed": 223,
+    "warnings": 2
+  },
+  "delivery_tests": {
+    "passed": 288,
+    "subtests_passed": 28,
+    "warnings": 2
+  },
+  "frontend_tests": {
+    "passed": 21,
+    "build_passed": true
+  },
+  "protocol": {
+    "errors": 0,
+    "holding_words": 32,
+    "input_words": 1830,
+    "port": 1502
+  },
+  "desktop_source_smoke": true,
+  "packaged_smoke": true,
+  "final_desktop_path_smoke": {
+    "passed": true,
+    "runtime": "PySide6 QtWebEngine + QWebChannel",
+    "mode": "mock only",
+    "checks": [
+      "offline startup",
+      "Qt transport available",
+      "UI mock connect",
+      "axis enable",
+      "name round trip",
+      "config round trip",
+      "point teach",
+      "cylinders / IO / diagnostics navigation",
+      "minimize revokes active jog",
+      "page reload revokes active jog",
+      "close revokes jog and joins communication worker"
+    ],
+    "errors": [],
+    "elapsed_seconds": 6.22
+  },
+  "plc_current_sources_match_compiler_record": 34,
+  "plc_project_origin": "FM_XJV1_AxisFix_v11.project",
+  "plc_project_sha256": "3e35d4df66509fde3b418c0904e1202ed8b77884909f14f2bd87174f0d4a7240",
+  "plc_compiler_evidence_date": "2026-10-30",
+  "plc_compilation_this_session": false,
+  "real_machine_acceptance_this_session": false,
+  "real_plc_connection_or_commands_this_session": false,
+  "excluded_legacy_reference_tests": [
+    "test_plc_axis_api_source.py",
+    "test_plc_host_compat.py",
+    "test_plc_main_source.py",
+    "test_plc_structure.py",
+    "test_plc_tree_contract.py"
+  ]
+}

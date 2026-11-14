@@ -1,0 +1,6 @@
+-r requirements.txt
+-r requirements-desktop.txt
+httpx==0.28.1
+playwright==1.63.0
+pyinstaller==6.22.3
+pytest==9.1.1

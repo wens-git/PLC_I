@@ -1,0 +1,6 @@
+{
+  "execution": "compile_only_no_login", 
+  "test_sha256": "f0abc056f092663cc539fc570969c8f1c677c27e83387149e3d3217713df8286", 
+  "production_build": "build-4d07d90b9d2f4678bd1c97bc443d3777", 
+  "success": true
+}

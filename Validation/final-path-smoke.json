@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "runtime": "PySide6 QtWebEngine + QWebChannel",
+  "mode": "mock only",
+  "checks": [
+    "offline startup",
+    "Qt transport available",
+    "UI mock connect",
+    "axis enable",
+    "name round trip",
+    "config round trip",
+    "point teach",
+    "cylinders / IO / diagnostics navigation",
+    "minimize revokes active jog",
+    "page reload revokes active jog",
+    "close revokes jog and joins communication worker"
+  ],
+  "errors": [],
+  "elapsed_seconds": 6.22
+}

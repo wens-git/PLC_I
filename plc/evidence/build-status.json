@@ -1,0 +1,68 @@
+{
+  "modbus_slave": {
+    "holding": 32,
+    "verified": true,
+    "port": 1502,
+    "input": 1830,
+    "start": 0,
+    "stamp": "20261030-000640"
+  },
+  "stamp": "20261030-000640",
+  "compiler_counts": [
+    [
+      "0",
+      "0"
+    ]
+  ],
+  "sources": {
+    "plc\\src\\03_pou\\Axis_Home.st": "61a6dd54f29efffdbe09eda6129d08f0a7249c013d0653b28bf13ee0371f0a05",
+    "plc\\src\\02_gvl\\\u5168\u5c40\u53d8\u91cf_\u7ed1\u5b9a.gvl.st": "d7a43d7418179d489a9d1b64f6dc80a2e201064cc9fac430a9e52f729ba4dfe3",
+    "plc\\src\\03_pou\\Axis_MoveToPoint.st": "f877d77b4c97a6fab5970fd1ac69cc6fafb00db0af48b1988992aaf280d4a44a",
+    "plc\\src\\02_gvl\\\u5168\u5c40\u53d8\u91cf_\u901a\u4fe1\u6620\u50cf.gvl.st": "ce787b6f95cb4b4caf3ac4d85e30b31a22a301aa3d026832481fb31d72f60fe7",
+    "plc\\src\\02_gvl\\\u5168\u5c40\u53d8\u91cf_\u786c\u4ef6.gvl.st": "12109c6d8449058d7e94189d79fdadda6d3b54f72c4d3df3e1a045fdbb4f45e7",
+    "plc\\src\\03_pou\\\u529f\u80fd\u5757_\u8fd0\u884c\u63a7\u5236.st": "f07dd60934c92adfc0a000777db959903ff7f42638a1bb3c2ff3305c835e9b90",
+    "plc\\src\\01_types\\\u7c7b\u578b_\u547d\u4ee4\u533a.st": "25fc8fc593740b16e415c81181a30cec5a2846601ba4ab1bf54443b6f9972176",
+    "plc\\src\\03_pou\\\u529f\u80fd\u5757_\u914d\u7f6e.st": "9b96f1aafae033b4cbc535050156530ed9528846d5bfcf620c9a275e2713bda1",
+    "plc\\src\\02_gvl\\\u5168\u5c40\u53d8\u91cf_\u8f74\u8bf7\u6c42.gvl.st": "e8822fe5e450625ea129dd273c17e703e14f8d3bcc27db4dc23bfd32731699d3",
+    "plc\\src\\02_gvl\\\u5168\u5c40\u53d8\u91cf_\u8fd0\u884c\u914d\u7f6e.gvl.st": "b28136f4fda4bc6ade3b87cfaf06af254a683d9a852f0bd26cdff92f51633026",
+    "plc\\src\\03_pou\\\u51fd\u6570_\u53c2\u6570\u7801.st": "0022722e5ed26f12c9ebd9fec2afacb6fe0eb552a5b3104635e6f96c0de7fd32",
+    "plc\\src\\01_types\\\u7ed3\u6784\u4f53_\u8f74\u8bf7\u6c42.st": "1d5c5c88f70a2a30edea9f49e1231b2c4a06faef7584a338e27ac3b815494ecb",
+    "plc\\src\\03_pou\\\u529f\u80fd\u5757_\u8f93\u5165\u6ee4\u6ce2.st": "683fe016049a02c847211b091b3fafd3f2717d52bd08c68f126932a6147225a8",
+    "plc\\src\\03_pou\\\u529f\u80fd\u5757_\u6682\u505c\u6062\u590d.st": "759cbdf63020276c40f2bcfd116079e15051001b02bf7a7c2c00f977fbfdfe4e",
+    "plc\\src\\03_pou\\Axis_Busy.st": "592bee0859eb5176cc93e945765ac79617ddfd8bb1654733ec2847b254293420",
+    "plc\\src\\02_gvl\\\u5168\u5c40\u53d8\u91cf_\u4fdd\u6301\u533a.gvl.st": "d707a60394c3eccac857d42308bfa6c92fad59a41926326a84f364f98aef279e",
+    "plc\\src\\01_types\\\u7ed3\u6784\u4f53_\u6c14\u7f38\u72b6\u6001.st": "625786c6116bf70a39376a2d6ac185d50a42238df3f2705dffa121ca26569ae3",
+    "plc\\src\\03_pou\\Axis_Stop.st": "18920d4b3460a2c0f84953e1ffd70086576233d5001347c659bfdb4cb3b30337",
+    "plc\\src\\01_types\\\u7ed3\u6784\u4f53_\u8f74\u72b6\u6001.st": "9a6430a37d69a86d4556427c66b875465ce5c3524d997adc25564fe0dd3dea56",
+    "plc\\src\\03_pou\\\u529f\u80fd\u5757_\u670d\u52a1\u7aef.st": "1c277713eb15c6ca96d010bf846807c15ca13a916174a6b00c5023a69eff1d09",
+    "plc\\src\\03_pou\\\u51fd\u6570_\u6821\u9a8c.st": "42eaaddccc46a104fd28b9e2a51b88ad9f1a9e9ca16a6284c8c4d4f794d0ba84",
+    "plc\\src\\02_gvl\\\u5168\u5c40\u53d8\u91cf_\u7269\u7406IO.gvl.st": "84e4c82c7a496ac2b0460f72e45da03da3ddaeedad826ad7ce0779b89090abb6",
+    "plc\\src\\03_pou\\\u51fd\u6570_\u52a8\u4f5c\u8bb8\u53ef.st": "c8fa8b826a91850ffbdbd093b6e89e020eedb7ba2b0ae4aa99e9b45198804411",
+    "plc\\src\\03_pou\\\u529f\u80fd\u5757_\u770b\u95e8\u72d7.st": "f6121572c7641dc9528bfa5929b5799eb248126529c239b1f9facff10dbfa91f",
+    "plc\\src\\03_pou\\\u529f\u80fd\u5757_\u8f74\u8bf7\u6c42\u76d1\u89c6.st": "ee717fbd8465c56616c0ed99375a1ffef79b5a9f8397e63981eed56c8da66f31",
+    "plc\\src\\01_types\\\u7ed3\u6784\u4f53_\u8fd0\u884c\u65f6.st": "6e4c01ed62d73553c36ed0d545f3c600e57528dc13811ab11cf169f7e6ca3285",
+    "plc\\src\\03_pou\\\u529f\u80fd\u5757_\u6c14\u7f38.st": "d73d920ed44e46d1c08c9bfc40a89b8ca954fd98d25de4b9cf9884c53f1c752d",
+    "plc\\src\\02_gvl\\\u5168\u5c40\u53d8\u91cf_\u5730\u5740\u8868.gvl.st": "f7edf82b94ed6ed40ff93206872316f5e1ce088f699c82a77cdc141b414d405d",
+    "plc\\src\\03_pou\\\u51fd\u6570_\u989d\u5b9a\u503c.st": "9c3ef62052b0cb8fcdd8144b63f1acc83eed2a1b35e2bb53a5dfc5befc740301",
+    "plc\\src\\03_pou\\Axis_Done.st": "414f96858200155929bae9da2498d187807d98e6c0cf9be9c21e23acbf63cb1e",
+    "plc\\src\\03_pou\\Axis_Error.st": "236eca8b855e857531396344c60d5f117c03a97802d12917a321c8c8f1d6a31c",
+    "plc\\src\\01_types\\\u7ed3\u6784\u4f53_\u914d\u7f6e.st": "a8f2876bc9fa02bb645c2a39141910a7d0d4ec693f09f6ea439a2579fb0d68be",
+    "plc\\src\\03_pou\\\u529f\u80fd\u5757_\u8f74.st": "ae55183e82d85f4fc3164ea6e2b022c7d94b192f623d45b5a03c5c2b88cf2d4a",
+    "plc\\src\\04_program\\\u7a0b\u5e8f_\u4e3b\u5faa\u73af.st": "fb2b034343f08a361ffb0c23800bbcbfde7ee5c2f4104f6e9b550f2616d96fab"
+  },
+  "selftest": {
+    "axis_api_passed": 20,
+    "stamp": "20261030-000816",
+    "runtime_passed": 32,
+    "axis_api_failed": 0,
+    "failed": 0,
+    "pass": true,
+    "mode": "non-persistent isolated simulator",
+    "passed": 61,
+    "port_passed": 13,
+    "runtime_failed": 0,
+    "port_failed": 0,
+    "log": "selftest-20261030-000816.txt"
+  },
+  "success": true
+}

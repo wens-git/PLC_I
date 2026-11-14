@@ -1,0 +1,84 @@
+OPENING INTEGRATION PROJECT 20261030-000640
+PROJECT OPENED
+REMOVE PREVIOUS MODBUS DEVICE ModbusTCP_Slave_XJV1
+INSTALLED OFFICIAL MODBUS TCP SLAVE ModbusTCP_Slave_XJV1
+BUS CYCLE Ethernet task=MainTask update=AlwaysInBusCycle
+BUS CYCLE Ethernet task=MainTask update=AlwaysInBusCycle
+BUS CYCLE ModbusTCP_Slave_XJV1 task=MainTask update=AlwaysInBusCycle
+MODBUS SLAVE OptimizationOn=FALSE io_always_mapping=TRUE
+MOTION TASK VERIFIED owner=EtherCAT_Task calls=1 PLC_PRG
+CREATE POU API: create_pou(self: IScriptIecLanguageObjectContainer, name: str, type: PouType, language: Nullable[Guid], return_type: str, base_type: str, interfaces: str) -> IExtendedObject[IScriptObject]
+create_pou(self: IScriptIecLanguageObjectContainer2, type: SpecialPouType) -> IExtendedObject[IScriptObject]
+
+CREATE DUT API: create_dut(self: IScriptIecLanguageObjectContainer, name: str, type: DutType, baseType: str) -> IExtendedObject[IScriptObject]
+
+CREATE GVL API: create_gvl(self: IScriptIecLanguageObjectContainer, name: str) -> IExtendedObject[IScriptObject]
+
+LIBRARY ADD API add_library(self: IScriptLibManObject, name: str)add_library(self: IScriptLibManObject2, library: IManagedLib)
+LIBRARY REFERENCES Array[str](('#SM3_Robotics', '#SM3_Robotics_Visu', '#SM3_Transformation', '#XJ_UsedToCheckInterfaces', '#Standard', '#BreakpointLogging', 'XJ_FunctionUtils, 1.0.0.12 (Xinje)', '#IecVarAccess', '#CmpLog', '#SysMem', 'SysTypes2 Interfaces, * (System)', 'SysFile, 3.5.15.0 (System)', '#XMC_Drive_ETC', '#IoStandard', '#3SLicense', '#SM3_Basic', '#SM3_CNC', '#XJ_System', '#IODrvEtherCAT', '#SM3_Drive_ETC', '#XJ_ExtModule', '#IoDrvEthernet', '#XJ_HSIO', 'SysSocket, 3.5.15.0 (System)', '#IoDrvModbusTCPSlave'))
+remove_library remove_library(self: IScriptLibManObject, name: str)
+LIBRARY SysSocket not removed: 未找到库'SysSocket.
+LIBRARY SysTypes2 Interfaces not removed: 未找到库'SysTypes2 Interfaces.
+IMPORTED DUT 类型_命令区
+IMPORTED DUT 类型_发布区
+IMPORTED DUT 结构体_气缸状态
+IMPORTED DUT 结构体_轴状态
+IMPORTED DUT 结构体_轴请求
+IMPORTED DUT 结构体_运行时
+IMPORTED DUT 结构体_配置
+IMPORTED GVL 全局变量_保持区
+IMPORTED GVL 全局变量_地址表
+IMPORTED GVL 全局变量_物理IO
+IMPORTED GVL 全局变量_硬件
+IMPORTED GVL 全局变量_绑定
+IMPORTED GVL 全局变量_轴请求
+IMPORTED GVL 全局变量_运行配置
+IMPORTED GVL 全局变量_通信映像
+IMPORTED POU Axis_Busy
+IMPORTED POU Axis_Done
+IMPORTED POU Axis_Error
+IMPORTED POU Axis_Home
+IMPORTED POU Axis_MoveToPoint
+IMPORTED POU Axis_Stop
+IMPORTED POU 函数_动作许可
+IMPORTED POU 函数_参数码
+IMPORTED POU 函数_校验
+IMPORTED POU 函数_额定值
+IMPORTED POU 功能块_暂停恢复
+IMPORTED POU 功能块_服务端
+IMPORTED POU 功能块_气缸
+IMPORTED POU 功能块_看门狗
+IMPORTED POU 功能块_轴
+IMPORTED POU 功能块_轴请求监视
+IMPORTED POU 功能块_输入滤波
+IMPORTED POU 功能块_运行控制
+IMPORTED POU 功能块_配置
+IMPORTED POU 程序_主循环
+REGISTERED PERSISTENT INSTANCE 全局变量_保持区.Store
+MODBUS SLAVE VERIFIED port=1502 holding=32 input=1830 start=0
+TREE VERIFIED folders=5 active_objects=35 legacy_objects=0 legacy_tasks=0
+REBUILD MESSAGES
+导入对象 'ModbusTCP_Slave_调试通信'
+------ 开始构建应用程序 Device.Application -------
+代码典型化...
+完整编译 -- 0 错误, 0 警告
+
+CODE GENERATION MESSAGES
+导入对象 'ModbusTCP_Slave_调试通信'
+------ 开始构建应用程序 Device.Application -------
+此应用程序是最新的
+生成代码...
+生成全局初始化...
+生成代码初始化...
+生成重定位...
+生成代码的大小:  1389154 字节
+全局数据的大小: 295232 字节
+为代码和数据分配的总内存大小: 1662712 字节
+内存区域0包含 输入, 输出 和 不安全行为：大小：1048576字节，最高使用的地址：288200，最大连续存储器间隙：760376字节（72％）
+内存区域1包含 保留数据：大小：4096字节，最高使用的地址：2584，最大连续存储器间隙：1512字节（36％）
+内存区域2包含 持久性数据：大小：22144字节，最高使用的地址：18448，最大连续存储器间隙：3696字节（16％）
+内存区域3包含 代码：大小：1805912字节，最高使用的地址：1389160，最大连续存储器间隙：416752字节（23％）
+内存区域4包含 内存：大小：262144字节，最高使用的地址：262144，最大连续存储器间隙：0字节（0％）
+内存区域5包含 数据：大小：1048576字节，最高使用的地址：273552，最大连续存储器间隙：775024字节（73％）
+构建完整--0错误,0警告：准备下载
+IMPORT AND BUILD FINISHED

@@ -1,0 +1,8 @@
+HIGH_SPEED_IO task=EtherCAT_Task
+EtherCAT task=EtherCAT_Task
+EtherCAT task=EtherCAT_Task
+Ethernet task=EtherCAT_Task
+Ethernet task=EtherCAT_Task
+ModbusTCP_Slave_XJV1 task=EtherCAT_Task
+VERIFIED: 4 ms, single PLC_PRG owner, all selected bus cycles aligned
+SAVED C:\Users\Admin\Desktop\程序临时归档\20261024_移植版_20261029-200845_PulseReady\20261024_移植版_20261029-200845\plc/project/FM_XJV1_AxisFix_v11.project
