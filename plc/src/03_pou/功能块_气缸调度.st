@@ -21,7 +21,7 @@ FOR i := 0 TO 53 DO
         OR (NOT 全局变量_气缸请求.ast请求[i].b自动 AND NOT Runtime.b手动) THEN
         by取消 := 1;
     END_IF;
-    IF StopAll OR NOT b绑定 OR NOT ab气缸映射已核验[i] OR NOT ab气缸模块就绪[i]
+    IF StopAll OR NOT b绑定 OR NOT ab气缸映射有效[i] OR NOT ab气缸模块就绪[i]
         OR Runtime.b硬急停 OR Runtime.b软急停 THEN by取消 := 2; END_IF;
     b执行 := 全局变量_气缸请求.ast请求[i].b待下发;
     (* 停止不受模式取消阻挡，始终能撤销输出并确认已消失的故障。 *)
@@ -64,8 +64,8 @@ FOR i := 0 TO 53 DO
     Runtime.ast气缸[i].b运动中 := afb驱动[i].Moving;
     Runtime.ast气缸[i].b故障 := afb驱动[i].Fault;
     Runtime.ast气缸[i].w错误码 := afb驱动[i].Error;
-    ab气缸动点输出[i] := b绑定 AND ab气缸映射已核验[i] AND ab气缸模块就绪[i] AND afb驱动[i].WorkOutput;
-    ab气缸原点输出[i] := b绑定 AND ab气缸映射已核验[i] AND ab气缸模块就绪[i] AND afb驱动[i].OriginOutput;
+    ab气缸动点输出[i] := b绑定 AND ab气缸映射有效[i] AND ab气缸模块就绪[i] AND afb驱动[i].WorkOutput;
+    ab气缸原点输出[i] := b绑定 AND ab气缸映射有效[i] AND ab气缸模块就绪[i] AND afb驱动[i].OriginOutput;
 END_FOR;
 全局变量_气缸请求.st许可快照 := Runtime;
 END_FUNCTION_BLOCK

@@ -14,20 +14,19 @@ def cylinder(mode=3, sensors=False):
     return plc
 
 
-def test_cylinder_requires_real_confirmation_and_reset_sequence():
+def test_manual_cylinder_action_needs_no_confirmation_or_reset():
     from test_mock_behavior import configure
     plc = MockPlc()
-    assert plc.command(40, 2, 0)["result"] == 11
+    assert plc.reset_required and not plc.configured
     assert plc.command(52, a=plc.config_epoch)["result"] == 18
     configure(plc)
     assert plc.command(52, a=plc.config_epoch)["result"] == 0
-    assert plc.command(40, 2, 0)["result"] == 11
-    assert plc.command(1)["result"] == 0
+    # 手动模式下，编辑参数引起的待复位同样不阻止动点/原点手动触发。
+    assert plc.reset_required
     assert plc.command(40, 2, 0)["result"] == 0
-    assert plc.command(40, 2, 0)["result"] == 10
-    assert plc.command(41, 2, 0)["result"] == 10
-    assert plc.command(42, 2, 0)["result"] == 0
-    assert plc.command(41, 2, 0)["result"] == 0
+    # 运行中（自动）不允许手动气缸动作。
+    plc.running, plc.manual, plc.paused = True, False, False
+    assert plc.command(41, 2, 0)["result"] == 7
 
 
 @pytest.mark.parametrize("offline,alarm", [(True, False), (False, True), (True, True)])
@@ -44,8 +43,8 @@ def test_cylinder_parameter_write_allowed_with_module_fault(offline, alarm):
 @pytest.mark.parametrize("changes,expected", [
     ({"resetting": True, "paused": True}, 8),
     ({"paused": True}, 7), ({"manual": False}, 7),
-    ({"reset_required": True, "configured": False}, 11),
-    ({"reset_required": False, "configured": False}, 14),
+    ({"reset_required": True, "configured": False}, 0),
+    ({"reset_required": False, "configured": False}, 0),
     ({"running": True}, 0),
 ])
 def test_cylinder_rejection_order_matches_plc(changes, expected):
@@ -146,8 +145,9 @@ def test_timeout_latches_until_explicit_cancel(step):
     for _ in range(round(2 / step)):
         plc.tick(step)
     assert state(plc)["alarm"]
-    assert not any(plc.snapshot()["io"]["y"])
+    assert plc.snapshot()["io"]["y"][0]
     plc.tick(5)
+    assert plc.snapshot()["io"]["y"][0]
     assert plc.command(40, 2, 0)["result"] == 17
     plc.cylinders[0]["online"] = False
     plc.command(42, 2, 0)
@@ -236,13 +236,12 @@ def test_delay_edit_after_completion_preserves_output_and_applies_next_request()
     plc.tick(2)
     assert state(plc)["move"] and not state(plc)["alarm"]
     assert plc.snapshot()["io"]["y"][0]
-    assert plc.command(40, 2, 0)["result"] == 11
-    plc.configured, plc.reset_required = True, False
-    plc.command(40, 2, 0)
+    # 参数修改引起的待复位不再阻止手动触发；新延时在下次动作生效。
+    assert plc.command(40, 2, 0)["result"] == 0
     plc.tick(.599)
-    assert not state(plc)["move"]
+    assert not state(plc)["alarm"]
     plc.tick(.001)
-    assert state(plc)["move"]
+    assert state(plc)["move"] and not state(plc)["alarm"]
 
 
 @pytest.mark.parametrize("mode", [1, 3])

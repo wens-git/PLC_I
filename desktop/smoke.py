@@ -89,8 +89,9 @@ await click('body','复位');
 await until(()=>!button('body','复位中'),'global reset settled');
 await nav('/cylinders');
 await until(()=>document.querySelector('.cylinder-table tbody tr button'),'cylinder view');
-await click('.cylinder-table tbody tr','动点');
+await click('.cylinder-table tbody tr','到动点');
 await until(()=>document.querySelector('.cylinder-table tbody tr td:nth-child(3) .badge')?.textContent.includes('动点 · 传感器确认'),'cylinder sensor confirmation');
+await until(()=>[...document.querySelectorAll('.cylinder-table tbody tr button')].some(b=>b.textContent.includes('撤销命令')),'cylinder cancel label by valve type');
 document.querySelector('.cylinder-table tbody tr [title="气缸参数"]').click();
 await until(()=>document.querySelector('[aria-label="原点确认延时"]'),'independent cylinder delay');
 input=document.querySelector('[aria-label="原点确认延时"]');
@@ -171,10 +172,18 @@ emit('jog-minimize');
             self.fail('页面重载没有撤销点动')
             return
         self.report['checks'].append('page reload revokes active jog')
+        self.focus_retries = 0
+        self._reload_press()
+
+    def _reload_press(self):
         self.window.activateWindow()
         self.window.raise_()
         self.window.view.setFocus()
-        self.script("await until(()=>!document.querySelector('.offline-overlay'),'reload reconnect'); await nav('/axes/0'); await until(()=>document.hasFocus(),'reload window focus'); await until(()=>document.querySelector('[aria-label=\"正向点动\"]'),'jog button'); press(); emit('jog-close');")
+        if not self.window.isActiveWindow() and self.focus_retries < 25:
+            self.focus_retries += 1
+            QTimer.singleShot(200, self._reload_press)
+            return
+        self.script("await until(()=>!document.querySelector('.offline-overlay'),'reload reconnect'); await nav('/axes/0'); await sleep(300); await until(()=>document.querySelector('[aria-label=\"正向点动\"]'),'jog button'); press(); emit('jog-close');")
 
     def close_with_jog(self):
         try:

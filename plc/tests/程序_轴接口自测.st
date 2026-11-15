@@ -38,17 +38,17 @@ CASE Step OF
         Server(Command := Command, Published := Published, Runtime := Runtime);
         Runtime.b待复位 := FALSE;
         Result := Axis_MoveToPoint(0, 120);
-        Ok := NOT Result AND Axis_Error(0) AND NOT Axis_Done(0);
+        Ok := NOT Result AND Axis状态(0).b错误 AND NOT Axis状态(0).b完成;
     1:
         Result := Axis_MoveToPoint(0, 16);
-        Ok := Result AND Axis_Busy(0) AND NOT Axis_Done(0);
+        Ok := Result AND Axis状态(0).b忙 AND NOT Axis状态(0).b完成;
         Result := Axis_Home(0);
         Ok := Ok AND NOT Result;
     2:
         (* Free slot must reject through the real shared dispatch path. *)
         Command[2] := Command[2] + 1;
         Server(Command := Command, Published := Published, Runtime := Runtime);
-        Ok := Axis_Error(0) AND NOT Axis_Done(0) AND (Runtime.aw轴命令[0] = 0);
+        Ok := Axis状态(0).b错误 AND NOT Axis状态(0).b完成 AND (Runtime.aw轴命令[0] = 0);
     3:
         全局变量_保持区.Store.b已确认 := TRUE;
         全局变量_保持区.Store.aw点位[16, 0] := 0;
@@ -59,7 +59,7 @@ CASE Step OF
         Runtime.ast轴[0].w运动结果 := 2;
         Runtime.ast轴[0].w序列 := 65535;
         Result := Axis_MoveToPoint(0, 16);
-        Ok := Result AND NOT Axis_Done(0);
+        Ok := Result AND NOT Axis状态(0).b完成;
     4:
         Runtime.b待复位 := FALSE;
         Command[2] := Command[2] + 1;
@@ -67,7 +67,7 @@ CASE Step OF
         Sequence := Runtime.aw轴序列[0];
         Manager(Runtime := Runtime);
         Ok := (Runtime.aw轴命令[0] = 27) AND (Sequence <> 65535)
-            AND (Runtime.adi轴目标[0] = 1000) AND NOT Axis_Done(0);
+            AND (Runtime.adi轴目标[0] = 1000) AND NOT Axis状态(0).b完成;
     5:
         Runtime.aw轴命令[0] := 0;
         Runtime.ast轴[0].w序列 := Sequence;
@@ -75,32 +75,32 @@ CASE Step OF
         Runtime.ast轴[0].b运动中 := TRUE;
         Runtime.ast轴[0].b静止 := FALSE;
         Manager(Runtime := Runtime);
-        Ok := Axis_Busy(0) AND NOT Axis_Done(0);
+        Ok := Axis状态(0).b忙 AND NOT Axis状态(0).b完成;
     6:
         Runtime.ast轴[0].w运动结果 := 2;
         Runtime.ast轴[0].b运动中 := FALSE;
         Runtime.ast轴[0].b静止 := TRUE;
         Manager(Runtime := Runtime);
-        Ok := Axis_Done(0) AND NOT Axis_Busy(0) AND NOT Axis_Error(0);
+        Ok := Axis状态(0).b完成 AND NOT Axis状态(0).b忙 AND NOT Axis状态(0).b错误;
     7:
         Result := Axis_MoveToPoint(0, 16);
-        Ok := Result AND NOT Axis_Done(0);
+        Ok := Result AND NOT Axis状态(0).b完成;
         Result := Axis_Stop(0);
-        Ok := Ok AND Result AND NOT Axis_Done(0) AND Axis_Error(0);
+        Ok := Ok AND Result AND NOT Axis状态(0).b完成 AND Axis状态(0).b错误;
     8:
         Command[2] := Command[2] + 1;
         Server(Command := Command, Published := Published, Runtime := Runtime);
         Manager(Runtime := Runtime);
-        Ok := (Runtime.aw轴命令[0] = 26) AND NOT Axis_Done(0);
+        Ok := (Runtime.aw轴命令[0] = 26) AND NOT Axis状态(0).b完成;
     9:
         Result := Axis_Home(0);
         Runtime.b运行 := FALSE;
         Command[2] := Command[2] + 1;
         Server(Command := Command, Published := Published, Runtime := Runtime);
-        Ok := Axis_Error(0) AND (Runtime.aw轴命令[0] = 0);
+        Ok := Axis状态(0).b错误 AND (Runtime.aw轴命令[0] = 0);
     10:
-        Ok := NOT Axis_MoveToPoint(16, 0) AND NOT Axis_Done(16)
-            AND Axis_Error(16) AND NOT Axis_Busy(16);
+        Ok := NOT Axis_MoveToPoint(16, 0) AND NOT Axis状态(16).b完成
+            AND Axis状态(16).b错误 AND NOT Axis状态(16).b忙;
     11:
         Runtime.b运行 := TRUE;
         Runtime.ast轴[1].b在线 := TRUE;
@@ -110,7 +110,7 @@ CASE Step OF
         Result := Axis_Home(0);
         Ok := Result;
         Result := Axis_Home(1);
-        Ok := Ok AND Result AND Axis_Busy(0) AND Axis_Busy(1);
+        Ok := Ok AND Result AND Axis状态(0).b忙 AND Axis状态(1).b忙;
     12:
         Command[2] := Command[2] + 1;
         Server(Command := Command, Published := Published, Runtime := Runtime);
@@ -123,11 +123,11 @@ CASE Step OF
         Runtime.ast轴[0].w运动结果 := 1;
         Runtime.ast轴[1].w运动结果 := 1;
         Manager(Runtime := Runtime);
-        Ok := Axis_Busy(0) AND Axis_Busy(1) AND NOT Axis_Done(0) AND NOT Axis_Done(1);
+        Ok := Axis状态(0).b忙 AND Axis状态(1).b忙 AND NOT Axis状态(0).b完成 AND NOT Axis状态(1).b完成;
     14:
         Runtime.b暂停 := TRUE;
         Manager(Runtime := Runtime);
-        Ok := Axis_Error(0) AND Axis_Error(1) AND NOT Axis_Done(0) AND NOT Axis_Done(1);
+        Ok := Axis状态(0).b错误 AND Axis状态(1).b错误 AND NOT Axis状态(0).b完成 AND NOT Axis状态(1).b完成;
     15:
         Runtime.b暂停 := FALSE;
         Result := Axis_MoveToPoint(0, 16);
@@ -137,24 +137,24 @@ CASE Step OF
         Command[5] := 16#0100;
         Command[2] := Command[2] + 1;
         Server(Command := Command, Published := Published, Runtime := Runtime);
-        Ok := Ok AND (Runtime.aw轴命令[0] = 26) AND Axis_Error(0) AND NOT Axis_Done(0);
+        Ok := Ok AND (Runtime.aw轴命令[0] = 26) AND Axis状态(0).b错误 AND NOT Axis状态(0).b完成;
     16:
         Command[2] := Command[2] + 1;
         Server(Command := Command, Published := Published, Runtime := Runtime);
-        Ok := (Runtime.aw轴命令[0] = 0) AND NOT Axis_Busy(0);
+        Ok := (Runtime.aw轴命令[0] = 0) AND NOT Axis状态(0).b忙;
     17:
         Result := Axis_MoveToPoint(0, 16);
         Runtime.b暂停 := TRUE;
         Command[2] := Command[2] + 1;
         Server(Command := Command, Published := Published, Runtime := Runtime);
-        Ok := Result AND Axis_Error(0) AND (Runtime.aw轴命令[0] = 0);
+        Ok := Result AND Axis状态(0).b错误 AND (Runtime.aw轴命令[0] = 0);
     18:
         Runtime.b暂停 := FALSE;
         Runtime.b待复位 := TRUE;
         Result := Axis_Home(0);
         Command[2] := Command[2] + 1;
         Server(Command := Command, Published := Published, Runtime := Runtime);
-        Ok := Result AND Axis_Error(0) AND (Runtime.aw轴命令[0] = 0);
+        Ok := Result AND Axis状态(0).b错误 AND (Runtime.aw轴命令[0] = 0);
     19:
         (* Internal rejections must not replace the last network ACK. *)
         (* Wait past the 300ms publication period before checking network ACK. *)

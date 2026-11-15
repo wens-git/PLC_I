@@ -56,8 +56,10 @@ class MockPlc:
                 "online": index < 12, "move": False, "home": index < 12,
                 "moving": False, "alarm": False, "alarm_code": 0, "masked": False,
                 "permit": 0, "reason": 0 if index < 12 else 4,
-                "config": dict(zip(CYLINDER_FIELDS, (1, index * 2, index * 2 + 1,
-                                   index * 2, index * 2 + 1, 200, 3000, 0))),
+                "config": dict(zip(CYLINDER_FIELDS, (1, index * 2 if index < 12 else 65535,
+                                   index * 2 + 1 if index < 12 else 65535,
+                                   index * 2 if index < 12 else 65535,
+                                   index * 2 + 1 if index < 12 else 65535, 200, 3000, 0 if index < 12 else 200))),
             })
         # Shared point pool: slots 0..15 pre-own to their like-numbered axis (P0),
         # the rest are free (owner None) until claimed by teach or code 50.
@@ -85,7 +87,7 @@ class MockPlc:
         self._jog = None
         self._motions = {}
         self._cylinder_motions = {}
-        self._outputs = [False] * 32
+        self._outputs = [False] * 56
         # None selects the deterministic virtual plant; bool injects raw electrical input.
         self._sensor_overrides = {}
         self._sensor_raw = {(i, side): side == "home" for i in range(CYLINDERS)
@@ -186,11 +188,8 @@ class MockPlc:
                 return 5
             if obj["alarm"]:
                 return 17
-            if self.reset_required:
-                return 11
-            if not self.configured:
-                return 14
-            return self._cylinder_config_valid(cfg)
+            # 手动调试不要求上电复位或现场配置确认；自动运行由 manual=False 拒绝。
+            return self._cylinder_config_valid(cfg, index)
         if not obj["online"]:
             return 5
         if obj["alarm"] and code not in (21, 23):
@@ -233,24 +232,32 @@ class MockPlc:
                 -2147483.648 <= config["negative_limit"] < config["positive_limit"] <= 2147483.647 and
                 all(0.001 <= config[key] <= 2147483.647 for key in AXIS_FIELDS[2:7]))
 
-    def _cylinder_config_valid(self, config):
+    def _cylinder_config_valid(self, config, index=None):
         if any(not _integer(config[key], 0, 65535) for key in CYLINDER_FIELDS):
             return 9
         if config["wiring_flags"] & ~15:
             return 9
         mode = config["wiring_flags"] & 3
-        if config["move_y"] not in (*range(128), 65535):
+        if config["move_y"] not in (*range(56), 65535):
             return 9
         if (mode in (0, 2) and config["home_y"] != 65535 or
-                mode in (1, 3) and config["home_y"] not in (*range(128), 65535)):
+                mode in (1, 3) and config["home_y"] not in (*range(56), 65535)):
             return 9
         for sensor, delay in (("move_x", "delay_ms"), ("home_x", "home_delay_ms")):
-            if config[sensor] not in (*range(128), 65535):
+            if config[sensor] not in (*range(112), 65535):
                 return 9
             if not (0 <= config[delay] < config["timeout_ms"] <= 65535):
                 return 9
             if config[sensor] == 65535 and not config[delay]:
                 return 9
+        inputs = [config[key] for key in ("move_x", "home_x") if config[key] != 65535]
+        if len(inputs) != len(set(inputs)):
+            return 9
+        if index is not None and self._bound(2, index):
+            for other_index, other in enumerate(self.cylinders):
+                if other_index != index and self._bound(2, other_index):
+                    if any(value in (other["config"]["move_x"], other["config"]["home_x"]) for value in inputs):
+                        return 9
         return 0
 
     def _finish(self, result, object_word, sequence):
@@ -369,7 +376,7 @@ class MockPlc:
         delay = cfg["delay_ms" if side == "move" else "home_delay_ms"]
         cylinder[side] = active and self._confirmed_ms[index, side] >= delay
 
-    def _stop_cylinder(self, index, hold_outputs=False):
+    def _stop_cylinder(self, index, hold_outputs=False, preserve_fault_outputs=False):
         cylinder = self.cylinders[index]
         cylinder["moving"] = False
         self._cylinder_motions.pop(index, None)
@@ -377,6 +384,8 @@ class MockPlc:
             self._time_done[index, side] = False
             if cylinder["config"][side + "_x"] == 65535:
                 cylinder[side] = False
+        if preserve_fault_outputs:
+            return
         if hold_outputs and cylinder["config"]["wiring_flags"] & 3 == 3:
             output = cylinder["config"]["home_y"]
             if 0 <= output < len(self._outputs):
@@ -462,11 +471,11 @@ class MockPlc:
             if code == 42:
                 self._stop_cylinder(index)
                 if (cylinder["online"] and not self.estop and not self.software_estop
-                        and not self._cylinder_config_valid(cylinder["config"])):
+                        and not self._cylinder_config_valid(cylinder["config"], index)):
                     cylinder.update(alarm=False, alarm_code=0)
             else:
                 cfg = cylinder["config"]
-                if (self._cylinder_config_valid(cfg) or cfg["move_y"] == 65535 or
+                if (self._cylinder_config_valid(cfg, index) or cfg["move_y"] == 65535 or
                         cfg["wiring_flags"] & 3 in (1, 3) and cfg["home_y"] == 65535):
                     return 9
                 self._stop_cylinder(index)
@@ -492,7 +501,7 @@ class MockPlc:
         elif code == 22:
             return self._start_motion(index, 0.0, axis["config"]["manual_speed"], sequence, homing=True)
         elif code == 23:
-            axis.update(alarm=False, alarm_code=0, drive_error=0)
+            axis.update(alarm=False, alarm_code=0, drive_error=0, enabled=False)
         elif code in (24, 25):
             direction = 1 if code == 24 else -1
             axis.update(jog=direction, running=True, static=False, jog_positive=direction > 0,
@@ -543,7 +552,7 @@ class MockPlc:
             for bit, key in enumerate(CYLINDER_FIELDS[5:]):
                 if mask & (1 << bit):
                     candidate[key] = words[5 + bit]
-            error = self._cylinder_config_valid(candidate)
+            error = self._cylinder_config_valid(candidate, index)
             if error:
                 return error
         else:
@@ -610,7 +619,7 @@ class MockPlc:
             if cylinder["alarm"]:
                 return 17
             cfg = cylinder["config"]
-            if (self._cylinder_config_valid(cfg) or cfg["move_y"] == 65535 or
+            if (self._cylinder_config_valid(cfg, index) or cfg["move_y"] == 65535 or
                     cfg["wiring_flags"] & 3 in (1, 3) and cfg["home_y"] == 65535):
                 return 9
         return 0
@@ -678,8 +687,12 @@ class MockPlc:
             for index, cylinder in enumerate(self.cylinders):
                 motion = self._cylinder_motions.get(index)
                 cfg = cylinder["config"]
-                if not self._bound(2, index) or not cylinder["online"] or cylinder["alarm"]:
+                if not self._bound(2, index) or not cylinder["online"]:
                     self._stop_cylinder(index)
+                    continue
+                if cylinder["alarm"]:
+                    self._stop_cylinder(index, preserve_fault_outputs=(
+                        cylinder["alarm_code"] == 2140 and cfg["wiring_flags"] & 3 in (2, 3)))
                     continue
                 if not self.connected or not self.online or not self.handshake:
                     self._stop_cylinder(index, hold_outputs=True)
@@ -711,7 +724,7 @@ class MockPlc:
                     timeout = cfg["timeout_ms"] / 1000
                     if end >= timeout and timeout <= completion:
                         cylinder.update(alarm=True, alarm_code=2140)
-                        self._stop_cylinder(index)
+                        self._stop_cylinder(index, preserve_fault_outputs=cfg["wiring_flags"] & 3 in (2, 3))
                     elif end >= completion:
                         if cfg[target + "_x"] == 65535:
                             self._time_done[index, target] = True
@@ -773,7 +786,7 @@ class MockPlc:
                 self.software_estop and self._permission(11) == 0,
                 self._permission(52) == 0 and self._confirmation_error() == 0,
             )) if permitted)
-            inputs = [False] * 32
+            inputs = [False] * 112
             for cylinder in cylinders:
                 if cylinder["bound"]:
                     for side in ("move", "home"):
@@ -845,14 +858,22 @@ class MockPlc:
                         point["owner"] is not None and not self._position_valid(
                             point["position"], dict(axes[point["owner"]]["config"], flags=0))):
                     raise ValueError(f"模拟持久化文件中点位 {slot} 无效")
-            for cylinder, stored in zip(cylinders, data["cylinders"]):
+            for index, (cylinder, stored) in enumerate(zip(cylinders, data["cylinders"])):
                 cfg = dict(stored["config"])
                 if data["signature"] == 0x584A5632:
                     if set(cfg) != (set(CYLINDER_FIELDS) - {"home_delay_ms"}) | {"flags"} or cfg["flags"] != 0:
                         raise ValueError("Invalid legacy cylinder configuration")
                     cfg.pop("flags")
                     cfg["home_delay_ms"] = cfg["delay_ms"]
-                if (set(cfg) != set(CYLINDER_FIELDS) or self._cylinder_config_valid(cfg) or
+                # Earlier simulator versions assigned fictitious IO to unbound slots.
+                # Recognize only that exact layout; never inherit arbitrary wiring.
+                if index >= 12 and tuple(cfg.get(key) for key in CYLINDER_FIELDS[:5]) == (
+                        1, index * 2, index * 2 + 1, index * 2, index * 2 + 1):
+                    for key in CYLINDER_FIELDS[1:5]:
+                        cfg[key] = 65535
+                    if cfg.get("home_delay_ms") == 0:
+                        cfg["home_delay_ms"] = cfg["delay_ms"]
+                if (set(cfg) != set(CYLINDER_FIELDS) or self._cylinder_config_valid(cfg, index) or
                         any(cfg[key] != cylinder["config"][key] for key in CYLINDER_FIELDS[:5])):
                     raise ValueError("Invalid persisted cylinder configuration")
                 cylinder["config"] = cfg

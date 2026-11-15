@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cylinderType, cylinderSide, cylinderStatus, cylinderValues } from '../src/cylinder.js'
+import { cylinderAction, cylinderType, cylinderSide, cylinderStatus, cylinderValues } from '../src/cylinder.js'
 
 const config = { wiring_flags: 0, move_y: 0, home_y: 65535, move_x: 0, home_x: 65535, delay_ms: 0, home_delay_ms: 200, timeout_ms: 3000 }
 test('all wiring modes display engineering type and vacuum action labels', () => {
@@ -10,6 +10,22 @@ test('all wiring modes display engineering type and vacuum action labels', () =>
     assert.equal(cylinderSide(c, 'move').label, mode >= 2 ? '吸附' : '动点')
     assert.equal(cylinderSide(c, 'home').label, mode >= 2 ? '释放' : '原点')
   }
+})
+test('action labels explain valve-specific cancellation and vacuum timeout behavior', () => {
+  const cancelLabels = ['断电回原点', '撤销命令（阀保持，不会停止动作）', '释放（关吸气）', '释放（关吸气）']
+  for (let mode = 0; mode < 4; mode++) {
+    // Input inversion bits must not change the valve's physical action labels.
+    const c = { ...config, wiring_flags: mode | 12 }
+    assert.equal(cylinderAction(c, 40).label, mode >= 2 ? '吸附' : '到动点')
+    assert.equal(cylinderAction(c, 41).label, mode >= 2 ? '释放' : '到原点')
+    assert.equal(cylinderAction(c, 42).label, cancelLabels[mode])
+    if (mode >= 2) for (const code of [40, 41, 42]) assert.match(cylinderAction(c, code).title, /真空超时应保持吸附，需手动释放/)
+  }
+  assert.match(cylinderAction({ wiring_flags: 0 }, 42).title, /弹簧复位.*回原点/)
+  assert.match(cylinderAction({ wiring_flags: 1 }, 42).title, /保持原阀位，不会停止动作/)
+  assert.match(cylinderAction({ wiring_flags: 3 }, 41).title, /释放完成后关闭破真空/)
+  assert.match(cylinderAction({ wiring_flags: 3 }, 42).title, /关闭吸气及破真空输出/)
+  assert.match(cylinderAction(undefined, 42).title, /配置未读回/)
 })
 test('sensor confirmation and time completion are separate, including inversion', () => {
   assert.equal(cylinderSide(config, 'move').input, 'X0')

@@ -1,4 +1,4 @@
-﻿(* API: installed SM3_Basic 4.10.0.0 LibDoc MC_* declarations.
+(* API: installed SM3_Basic 4.10.0.0 LibDoc MC_* declarations.
    Call once per scan, with Code=0 between command pulses. State is not retained.
    The caller owns soft limits, rated limits and bus OP for BusOperational,
    global permissions and jog lease cancellation (Code 26, even Sequence=0).
@@ -187,8 +187,7 @@ IF b新命令 THEN
             State.w序列 := Sequence;
             State.w运动结果 := 2;
             b释放周期 := TRUE;
-            (* 复位即重新上电：清故障后自动使能，不再要求单独下发 20。 *)
-            b请求上电 := TRUE;
+            (* 清故障只消除报警，不自动使能；使能必须单独下发 20。 *)
         END_IF;
     ELSIF b可接收 AND State.b在线 AND NOT HardEstop AND NOT State.b故障
         AND NOT b需恢复 AND (w新故障 = 0) THEN

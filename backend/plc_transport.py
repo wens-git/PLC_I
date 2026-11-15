@@ -194,16 +194,23 @@ class PlcTransport:
                 if any(not 1 <= dword(block[offset:offset + 2]) <= 0x7FFFFFFF for offset in range(4, 14, 2)):
                     raise ValueError(f"轴 {index} 速度或加减速度为 0 或超出范围")
         bound = dword(status[STATUS_OFFSET["cylinder_bound"]:STATUS_OFFSET["cylinder_bound"] + 4])
+        used_inputs = set()
         for index in range(CYLINDERS):
             block = config["cylinder_config"][index * 8:(index + 1) * 8]
             if block[0] & ~0x0F:
                 raise ValueError(f"气缸 {index} 参数含不支持的标志位")
             mode = block[0] & 3
-            if any(value != 65535 and not 0 <= value < 128 for value in block[1:5]):
+            if (any(value != 65535 and not 0 <= value < 56 for value in block[1:3]) or
+                    any(value != 65535 and not 0 <= value < 112 for value in block[3:5])):
                 raise ValueError(f"气缸 {index} IO映射非法")
             if mode in (0, 2) and block[2] != 65535:
                 raise ValueError(f"气缸 {index} 单输出模式不能映射原点输出")
             if bound & (1 << index):
+                for sensor in block[3:5]:
+                    if sensor != 65535:
+                        if sensor in used_inputs:
+                            raise ValueError(f"气缸 {index} 输入映射重复")
+                        used_inputs.add(sensor)
                 if block[1] == 65535 or mode in (1, 3) and block[2] == 65535:
                     raise ValueError(f"气缸 {index} 输出未映射")
                 if (not 0 <= block[5] < block[6] <= 65535 or

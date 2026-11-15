@@ -1,0 +1,61 @@
+{
+  "date": "2026-11-15",
+  "protocol_revision": "1.3",
+  "protocol_signature": "0x584A5633",
+  "python_tests": {
+    "passed": 377,
+    "subtests_passed": 28,
+    "warnings": 2
+  },
+  "frontend_tests": {
+    "passed": 27,
+    "build_passed": true
+  },
+  "plc": {
+    "production_project": "plc/project/FM_XJV1_Cylinder_v13.project",
+    "source_files": 55,
+    "rebuild_errors": 0,
+    "rebuild_warnings": 0,
+    "code_generation_errors": 0,
+    "code_generation_warnings": 0,
+    "build_record": "plc/evidence/safety-fix-build-status.json",
+    "real_plc_connected": false,
+    "downloaded_to_plc": false,
+    "physical_cylinders_bound": 0,
+    "physical_hard_limits_wired": false
+  },
+  "safety_fixes": [
+    "cylinder physical IO mapping layer with input/output images and real module-online flags",
+    "manual mapping flag replaced by derived validity; outputs forced 0 when unmapped or invalid",
+    "axis motion refused when hard limits are unwired and soft limits disabled",
+    "clear-fault 23 no longer auto-enables the axis",
+    "vacuum timeout keeps adsorption and latches fault; ordinary valves still drop outputs",
+    "42 semantics documented per valve type; double-solenoid cancel does not stop motion",
+    "cross-cylinder input/output address duplicates rejected; capacity 112 inputs / 56 outputs",
+    "binding epoch increments automatically when the binding table changes"
+  ],
+  "desktop": {
+    "source_smoke_passed": true,
+    "source_smoke_record": "artifacts/safety-smoke-4.json",
+    "packaged_smoke_passed": true,
+    "packaged_smoke_record": "artifacts/final-pkg-smoke.json",
+    "packaged_launch_verified": true,
+    "packaging_notes": [
+      "WebEngine runs with --no-sandbox --single-process --disable-gpu because this host blocks the renderer child process",
+      "Data directory falls back to the install directory when %LOCALAPPDATA% is not writable",
+      "A third-party overlay injector (GamePP) caused access violations in the packaged EXE and was stopped for testing"
+    ],
+    "mode": "mock only"
+  },
+  "limitations": [
+    "No real PLC or physical IO acceptance; module diagnostics still need field wiring",
+    "Timer-based confirmation without sensors is not physical position or vacuum proof",
+    "Double-solenoid valve keeps its position when both coils drop; a cancel never guarantees mechanical stop"
+  ],
+  "refactor": [
+    "error codes centralized in 全局变量_错误码",
+    "Cy/Axis status queries merged into struct-returning functions",
+    "region markers in server and main cycle",
+    "cylinder module readiness switch: b气缸IO已接入 / b气缸IO模块诊断已接入"
+  ]
+}

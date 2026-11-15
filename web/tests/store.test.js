@@ -1,9 +1,26 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { hmi, post } from '../src/store.js'
+import { command, hmi, post } from '../src/store.js'
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { 'Content-Type': 'application/json' },
+})
+
+test('duplicate cylinder cancellation while pending sends once and does not retry failure', async () => {
+  let settle
+  const writes = []
+  hmi.meta = { csrf_token: 't', rejections: {} }
+  globalThis.fetch = async (url, init) => {
+    writes.push(JSON.parse(init.body))
+    return new Promise(resolve => { settle = resolve })
+  }
+  const first = command(42, 2, 0)
+  assert.equal(await command(42, 2, 0), false)
+  assert.equal(writes.length, 1)
+  settle(json({ detail: '结果未知' }, 504))
+  assert.equal(await first, false)
+  assert.equal(writes.length, 1)
+  assert.equal(hmi.pending['command:42:2:0'], undefined)
 })
 
 test('expired csrf token refreshes meta and retries once', async () => {

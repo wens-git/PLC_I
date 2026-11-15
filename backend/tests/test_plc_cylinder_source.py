@@ -26,7 +26,7 @@ class CylinderChainTests(unittest.TestCase):
     def test_stop_codes_bypass_integration_but_reject_unbound(self):
         permit = st("03_pou/函数_动作许可.st")
         stop = permit[permit.index("IF b是停止 THEN"):permit.index("IF NOT HmiOnline THEN")]
-        self.assertIn("函数_动作许可 := 4", stop)
+        self.assertIn("函数_动作许可 := ERR_未绑定", stop)
         self.assertNotIn("b硬件已接入", stop)
 
     def test_cylinder_binding_comes_from_engineering_constant(self):
@@ -91,7 +91,7 @@ class CylinderChainTests(unittest.TestCase):
         server = st("03_pou/功能块_服务端.st")
         self.assertIn("XJV1_STATUS_CYLINDER_BOUND_OFFSET + i循环", server)
         self.assertIn("XJV1_STATUS_CYLINDER_ONLINE_OFFSET + i循环", server)
-        self.assertIn("AND ab气缸映射已核验[i循环] AND ab气缸模块就绪[i循环]", server)
+        self.assertIn("AND ab气缸映射有效[i循环] AND ab气缸模块就绪[i循环]", server)
 
 
 class CylinderUpgradeTests(unittest.TestCase):
@@ -102,17 +102,17 @@ class CylinderUpgradeTests(unittest.TestCase):
         self.assertIn("Store.b已确认 := FALSE", migration)
         self.assertNotIn("Store.aw轴配置", migration)
         self.assertNotIn("Store.aw点位", migration)
-        for field in ("aw类型", "aw动点输出", "aw原点输出", "aw动点输入", "aw原点输入"):
-            self.assertIn("全局变量_气缸工程." + field, text)
+        for field in ("已绑定", "e阀型", "out动点", "out原点", "e动点确认", "in动点", "e原点确认", "in原点"):
+            self.assertIn(field, st("01_types/结构体_Cy气缸配置.st"))
+        self.assertIn("Cy气缸配置", st("02_gvl/全局变量_气缸工程.gvl.st"))
 
     def test_token_queries_reject_zero_and_stale_owner(self):
-        for name in ("完成", "忙", "故障"):
-            text = st(f"03_pou/气缸_{name}.st")
-            self.assertIn("请求号 : UDINT", text)
-            self.assertIn("请求号 = 0", text)
-            self.assertIn("udi请求号", text)
-        done = st("03_pou/气缸_完成.st")
-        self.assertIn("udi完成号 = 请求号", done)
+        text = st("03_pou/Cy状态.st")
+        self.assertIn("udi请求号", text)
+        self.assertIn("Cy设备状态", text)
+        self.assertIn("udi完成号 = Cy设备状态[设备].udi请求号", text)
+        self.assertIn("ERR_非法", text)
+        self.assertIn("ERR_取消", text)
         submit = st("03_pou/气缸_提交.st")
         self.assertIn("函数_动作许可", submit)
         self.assertIn("命令 <> 42", submit)

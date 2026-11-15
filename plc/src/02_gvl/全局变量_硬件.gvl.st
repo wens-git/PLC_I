@@ -12,11 +12,10 @@ VAR_GLOBAL
        from MC feedback; it does not prove that a pulse drive has power. *)
     ab正限位 : ARRAY[0..2] OF BOOL;
     ab负限位 : ARRAY[0..2] OF BOOL;
-    (* Cylinder commissioning seam. Sensor inputs default FALSE until verified
-       wiring lands; valve demands are logical coil requests, not physical Y
-       writes, and stay FALSE while motion permits remain closed. *)
-    ab气缸模块就绪 : ARRAY[0..53] OF BOOL; (* 实际模块诊断，默认FALSE *)
-    ab气缸映射已核验 : ARRAY[0..53] OF BOOL; (* 实际调用者接线完成，默认FALSE *)
+    (* Cylinder commissioning seam. Sensor inputs default FALSE until the IO image
+       is mapped; valve demands are written to 全局变量_气缸IO映像 by the output map. *)
+    ab气缸模块就绪 : ARRAY[0..53] OF BOOL; (* 由真实模块在线位推导，不可手工赋值 *)
+    ab气缸映射有效 : ARRAY[0..53] OF BOOL; (* 由绑定、配置有效和地址容量推导 *)
     ab气缸动点传感器 : ARRAY[0..53] OF BOOL;
     ab气缸原点传感器 : ARRAY[0..53] OF BOOL;
     ab气缸动点输出 : ARRAY[0..53] OF BOOL;

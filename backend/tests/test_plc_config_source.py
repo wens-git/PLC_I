@@ -58,8 +58,13 @@ class PlcConfigSourceTests(unittest.TestCase):
         self.assertNotIn("Names", text)
         self.assertLess(text.index("Store.b已确认 := FALSE"),
                         text.index("Store.dw签名 := XJV1_SIGNATURE"))
-        self.assertIn("lw已绑定气缸 : LWORD := 全局变量_气缸工程.lw绑定", read("02_gvl/全局变量_绑定.gvl.st"))
-        self.assertIn("lw绑定 : LWORD := 0", read("02_gvl/全局变量_气缸工程.gvl.st"))
+        binding = read("02_gvl/全局变量_绑定.gvl.st")
+        self.assertIn("lw已绑定气缸 : LWORD := 0", binding)
+        self.assertNotIn("全局变量_气缸工程.lw绑定", binding)
+        self.assertIn("Cy气缸配置 : ARRAY[0..53] OF 结构体_Cy气缸配置",
+                      read("02_gvl/全局变量_气缸工程.gvl.st"))
+        self.assertIn("e阀型 : Cy阀型", read("01_types/结构体_Cy气缸配置.st"))
+        self.assertIn("lw已绑定气缸 := lw绑定", read("04_program/程序_气缸绑定.st"))
 
     def test_envelope_binding_and_epoch_precede_candidate_commit(self):
         text = code()

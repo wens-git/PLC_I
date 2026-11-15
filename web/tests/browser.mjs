@@ -125,11 +125,19 @@ try {
   await page.goto(`${baseURL}/#/cylinders`)
   await page.locator('.offline-overlay').waitFor({ state: 'hidden' })
   const cylinderRow = page.locator('.cylinder-table tbody tr').first()
-  for (const name of ['动点', '原点', '取消']) assert.equal(await cylinderRow.getByRole('button', { name, exact: true }).isDisabled(), false, `cylinder ${name} is not pre-gated`)
+  for (const name of ['到动点', '到原点', '断电回原点']) assert.equal(await cylinderRow.getByRole('button', { name, exact: true }).isDisabled(), false, `cylinder ${name} is not pre-gated`)
   assert.match(await cylinderRow.textContent(), /原点 · 延时完成/)
   const vacuumRow = page.locator('.cylinder-table tbody tr').nth(2)
   assert.equal(await vacuumRow.getByRole('button', { name: '吸附', exact: true }).count(), 1)
   assert.equal(await vacuumRow.getByRole('button', { name: '释放', exact: true }).count(), 1)
+  const holdingRow = page.locator('.cylinder-table tbody tr').nth(1)
+  assert.equal(await holdingRow.getByRole('button', { name: '撤销命令（阀保持，不会停止动作）', exact: true }).count(), 1)
+  for (const index of [2, 3]) {
+    const row = page.locator('.cylinder-table tbody tr').nth(index)
+    for (const name of ['吸附', '释放', '释放（关吸气）']) {
+      assert.match(await row.getByRole('button', { name, exact: true }).getAttribute('title'), /真空超时应保持吸附，需手动释放/)
+    }
+  }
   await cylinderRow.getByTitle('气缸参数', { exact: true }).click()
   const cylinderDialog = page.getByRole('dialog')
   assert.equal(await cylinderDialog.getByText('调试屏蔽', { exact: true }).count(), 0)

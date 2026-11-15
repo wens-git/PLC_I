@@ -87,8 +87,14 @@ VAR
     w网络应答对象 : WORD;
     w网络上次拒绝 : WORD;
     w内部序列 : WORD;
+    (* 绑定纪元随绑定表变化递增，防止上位机沿用旧硬件档案。 *)
+    w当前绑定纪元 : WORD := 全局变量_绑定.w绑定纪元;
+    lw上次绑定气缸 : LWORD;
+    w上次绑定轴 : WORD;
+    b绑定已初始化 : BOOL;
 END_VAR
 
+(* ===== 区域 1：扫描初始化。清零一扫描命令，保持配置 FB 调用 ===== *)
 StopAllRequested := FALSE;
 SoftwareEstopRequested := FALSE;
 FOR i循环 := 0 TO 15 DO Runtime.aw轴命令[i循环] := 0; END_FOR;
@@ -96,6 +102,7 @@ FOR i循环 := 0 TO 53 DO Runtime.aw气缸命令[i循环] := 0; END_FOR;
 fb配置(Execute := FALSE, Request := st请求, Store := 全局变量_保持区.Store);
 IF NOT b已初始化 THEN Runtime.b待复位 := TRUE; END_IF;
 
+(* ===== 区域 2：限位与报警汇总。只读运行时状态，不产生命令 ===== *)
 (* Derive wire soft-limit feedback without manufacturing online or standstill. *)
 w首报警 := 0;
 w首报警对象 := 0;
@@ -149,6 +156,7 @@ fb看门狗(SignatureOK := b签名有效, Heartbeat := Command[2],
     StartObject := w起点动对象, StartSequence := w起点动序列, StopJog := b停点动脉冲);
 b起点动脉冲 := FALSE;
 b停点动脉冲 := FALSE;
+(* ===== 区域 3：通信看门狗与心跳。判定 HMI 在线、点动租约 ===== *)
 (* A SEQ left in the Holding image by a previous session (or present at power
    up) is never executed: it becomes the baseline on start and on reconnect. *)
 IF NOT b已初始化 OR fb看门狗.ConnectedEdge THEN
@@ -160,6 +168,7 @@ IF fb看门狗.CancelJog THEN
     Runtime.aw轴命令[ui点动索引] := 26;
 END_IF;
 
+(* ===== 区域 4：全局复位编排。停止 -> 静止 -> 复位 -> 完成 ===== *)
 (* Reset is stop -> settled scan -> reset pulse -> adapter completion.
    A timeout leaves PendingReset set and never restores a previous action. *)
 tmr复位(IN := ui复位阶段 <> 0, PT := T#30s);
@@ -209,6 +218,7 @@ END_CASE;
 
 Runtime.bHMI在线 := fb看门狗.Online;
 Runtime.b复位中 := ui复位阶段 <> 0;
+(* ===== 区域 5：命令处理。网络命令与内部轴/气缸请求共用校验与许可 ===== *)
 FOR ui请求来源 := 0 TO 16 DO
 b自动请求 := ui请求来源 <> 0;
 b处理请求 := FALSE;
@@ -421,6 +431,7 @@ FOR i循环 := 0 TO 15 DO
     END_IF;
 END_FOR;
 
+(* ===== 区域 6：定时器与状态发布。仅写发布区，不驱动设备 ===== *)
 tmr心跳(IN := NOT tmr心跳.Q, PT := T#200ms);
 IF tmr心跳.Q THEN wPLC心跳 := wPLC心跳 + 1; END_IF;
 tmr运行时间(IN := NOT tmr运行时间.Q, PT := T#1s);
@@ -459,7 +470,7 @@ IF b首次发布 OR tmr发布.Q THEN
     lw气缸在线 := 0;
     FOR i循环 := 0 TO 53 DO
         IF ((lw已绑定气缸 AND SHL(LWORD#1, i循环)) <> 0)
-            AND ab气缸映射已核验[i循环] AND ab气缸模块就绪[i循环] THEN
+            AND ab气缸映射有效[i循环] AND ab气缸模块就绪[i循环] THEN
             lw气缸在线 := lw气缸在线 OR SHL(LWORD#1, i循环);
         END_IF;
     END_FOR;
@@ -573,7 +584,14 @@ IF b首次发布 OR tmr发布.Q THEN
     Published[XJV1_STATUS_BASE + XJV1_STATUS_LAST_REJECTION_OFFSET] := w上次拒绝;
     Published[XJV1_STATUS_BASE + XJV1_STATUS_UPTIME_S_OFFSET] := UDINT_TO_WORD(SHR(udi运行时间, 16));
     Published[XJV1_STATUS_BASE + XJV1_STATUS_UPTIME_S_OFFSET + 1] := UDINT_TO_WORD(udi运行时间);
-    Published[XJV1_STATUS_BASE + XJV1_STATUS_BINDING_EPOCH_OFFSET] := w绑定纪元;
+    IF NOT b绑定已初始化 THEN
+        b绑定已初始化 := TRUE;
+    ELSIF (lw上次绑定气缸 <> lw已绑定气缸) OR (w上次绑定轴 <> w已绑定轴) THEN
+        w当前绑定纪元 := w当前绑定纪元 + 1;
+    END_IF;
+    lw上次绑定气缸 := lw已绑定气缸;
+    w上次绑定轴 := w已绑定轴;
+    Published[XJV1_STATUS_BASE + XJV1_STATUS_BINDING_EPOCH_OFFSET] := w当前绑定纪元;
     Published[XJV1_STATUS_BASE + XJV1_STATUS_CONFIG_EPOCH_OFFSET] := fb配置.Epoch;
     Published[XJV1_STATUS_BASE + XJV1_STATUS_POINT_POOL_OFFSET] := ui点位池容量;
     ui输入容量 := MIN(Runtime.ui输入点数, UINT#128);

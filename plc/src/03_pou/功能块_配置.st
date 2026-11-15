@@ -92,21 +92,6 @@ IF Store.dw签名 <> XJV1_SIGNATURE THEN
     (* Signature last: partial cold initialization must not look valid. *)
     Store.dw签名 := XJV1_SIGNATURE;
 END_IF;
-(* 工程表每扫描覆盖前5字，绝不保留旧flags高位或猜测物理映射。 *)
-FOR i循环 := 0 TO 53 DO
-    IF (Store.aw气缸配置[i循环, 0] <> 全局变量_气缸工程.aw类型[i循环])
-        OR (Store.aw气缸配置[i循环, 1] <> 全局变量_气缸工程.aw动点输出[i循环])
-        OR (Store.aw气缸配置[i循环, 2] <> 全局变量_气缸工程.aw原点输出[i循环])
-        OR (Store.aw气缸配置[i循环, 3] <> 全局变量_气缸工程.aw动点输入[i循环])
-        OR (Store.aw气缸配置[i循环, 4] <> 全局变量_气缸工程.aw原点输入[i循环]) THEN
-        Store.b已确认 := FALSE;
-    END_IF;
-    Store.aw气缸配置[i循环, 0] := 全局变量_气缸工程.aw类型[i循环];
-    Store.aw气缸配置[i循环, 1] := 全局变量_气缸工程.aw动点输出[i循环];
-    Store.aw气缸配置[i循环, 2] := 全局变量_气缸工程.aw原点输出[i循环];
-    Store.aw气缸配置[i循环, 3] := 全局变量_气缸工程.aw动点输入[i循环];
-    Store.aw气缸配置[i循环, 4] := 全局变量_气缸工程.aw原点输入[i循环];
-END_FOR;
 IF NOT Execute THEN RETURN; END_IF;
 
 Result := 函数_校验(Request := Request);

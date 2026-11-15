@@ -68,8 +68,13 @@ END_IF;
 b取消 := HardEstop OR Fault OR (CancelMode <> 0) OR (b新请求 AND (Code = 42));
 IF b取消 THEN
     udi活动请求 := 0; DoneToken := 0; i目标侧 := 0; Moving := FALSE;
-    IF HardEstop OR Fault OR (CancelMode = 2) OR (b新请求 AND (Code = 42)) THEN
+    IF HardEstop OR (CancelMode = 2) OR (b新请求 AND (Code = 42)) THEN
         WorkOutput := FALSE; OriginOutput := FALSE;
+    ELSIF Fault THEN
+        (* 普通阀超时/冲突撤销输出；真空吸附保持输出，等待人工 42 释放。 *)
+        IF (ValveType <> 2) AND (ValveType <> 3) THEN
+            WorkOutput := FALSE; OriginOutput := FALSE;
+        END_IF;
     ELSIF ValveType = 3 THEN
         OriginOutput := FALSE;
     END_IF;
@@ -104,8 +109,11 @@ Moving := NOT b取消 AND (udi活动请求 <> 0) AND (DoneToken = 0);
 tmr运动(IN := Moving, PT := WORD_TO_TIME(TimeoutMs));
 IF tmr运动.Q THEN
     Fault := TRUE; Error := 2140; DoneToken := 0; udi活动请求 := 0; i目标侧 := 0;
-    Moving := FALSE; WorkOutput := FALSE; OriginOutput := FALSE;
-    AtWork := FALSE; AtOrigin := FALSE;
+    Moving := FALSE; AtWork := FALSE; AtOrigin := FALSE;
+    (* 真空类型保持吸附/破真空，避免超时后掉件；普通阀撤销输出。 *)
+    IF (ValveType <> 2) AND (ValveType <> 3) THEN
+        WorkOutput := FALSE; OriginOutput := FALSE;
+    END_IF;
 ELSIF Moving AND (((i目标侧 = 1) AND AtWork) OR ((i目标侧 = 2) AND AtOrigin)) THEN
     DoneToken := udi活动请求; Moving := FALSE;
     IF (ValveType = 3) AND (i目标侧 = 2) THEN OriginOutput := FALSE; END_IF;

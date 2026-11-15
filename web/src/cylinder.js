@@ -12,6 +12,17 @@ export function cylinderSide(config, side) {
   return { label, sensor, known, confirmation: !known ? '配置未读回' : sensor ? '传感器确认' : '延时完成',
     input: !known ? '配置未读回' : sensor ? `X${address}${inverted ? '（反相）' : ''}` : '无传感器' }
 }
+export function cylinderAction(config, code) {
+  const mode = Number.isInteger(config?.wiring_flags) ? config.wiring_flags & 3 : null
+  if (mode === null) return { label: code === 40 ? '到动点 / 吸附' : code === 41 ? '到原点 / 释放' : '撤销命令', title: '阀型配置未读回，请核验阀型及输出行为；撤销命令不等于机械停止。' }
+  const vacuum = mode >= 2
+  const timeout = '真空超时应保持吸附，需手动释放；PLC 同时报警。'
+  if (code === 40) return { label: vacuum ? '吸附' : '到动点', title: vacuum ? `开启吸气并等待吸附确认；${timeout}` : '驱动到动点，完成后保持动点输出。' }
+  if (code === 41) return { label: vacuum ? '释放' : '到原点', title: vacuum ? `${mode === 3 ? '关闭吸气并开启破真空，释放完成后关闭破真空。' : '关闭吸气并等待释放确认。'}${timeout}` : mode === 0 ? '关闭动点输出，由弹簧复位回原点。' : '关闭动点输出并驱动原点输出，到原点后保持原点输出。' }
+  if (mode === 0) return { label: '断电回原点', title: '撤销本次命令并关闭两路输出，阀弹簧复位使气缸回原点；不是保持当前位置或安全急停。' }
+  if (mode === 1) return { label: '撤销命令（阀保持，不会停止动作）', title: '撤销本次命令并关闭两路输出；双电控阀保持原阀位，不会停止动作，也不会主动回原点。' }
+  return { label: '释放（关吸气）', title: `撤销本次命令，关闭吸气及破真空输出；不执行破真空释放计时。${timeout}` }
+}
 export function cylinderStatus(cylinder) {
   if (cylinder.alarm) return '故障'
   if (cylinder.moving) return '动作中'

@@ -80,14 +80,17 @@ class HmiWindow(QMainWindow):
         self.bridge.suspend(new_page=True)
 
     def _loaded(self, ok):
+        logging.info('Web page loadFinished ok=%s root=%s', ok, self.page.root)
         self.loading = not ok
         if ok:
             self.statusBar().clearMessage()
             self._update_interaction()
         else:
+            logging.error('Web page failed to load from %s', self.page.root)
             self.statusBar().showMessage('界面加载失败，请检查程序资源后重新启动')
 
     def _renderer_failed(self, status, code):
+        logging.error('Web renderer terminated status=%s code=%s', status, code)
         self.bridge.suspend(new_page=True)
         self.statusBar().showMessage('界面进程异常，点动已撤销；请退出后重新启动')
         self.loading = True

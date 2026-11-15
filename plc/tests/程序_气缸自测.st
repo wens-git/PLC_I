@@ -8,7 +8,7 @@ VAR
     w失败 : WORD;
     b完成 : BOOL;
     t等待 : TON;
-    udi夹紧请求号 : UDINT; (* 业务示例：保存气缸_到动点(气缸编号.夹紧缸)返回值 *)
+    udi夹紧请求号 : UDINT; (* 业务示例：保存 Cy动点(Cy夹紧) 返回值 *)
 END_VAR
 CASE ui阶段 OF
 0:
