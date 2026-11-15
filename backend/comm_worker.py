@@ -12,6 +12,7 @@ from .xj_protocol import (Command, SPEC, alarm_detail, command_name, object_labe
                           record_decode, rejection_action, scaled, validate_command)
 
 STOP_CODES = {9, 10, 26, 42}
+MAX_RETIRED_JOG_TOKENS = 4096
 
 
 class CommWorker:
@@ -27,6 +28,11 @@ class CommWorker:
         self.thread = None
         self.pending = None
         self.jog = None
+        # Retain cancellations for the entire worker lifetime: arbitrarily late
+        # HTTP/bridge requests must never revive a released press. Fail closed
+        # at the bound rather than evicting tokens and reopening that race.
+        self.retired_jog_tokens = set()
+        self.jog_tokens_full = False
         self.sequence = 0
         self.ready = mode == "mock"
         self.last_poll = 0
@@ -43,7 +49,9 @@ class CommWorker:
 
     def state(self):
         result = self.tags.snapshot()
-        result.update(mode=self.mode, session=self.session)
+        lifecycle = ('disconnecting' if self.closing else 'connected' if self.ready and result.get('connected')
+                     else 'reconnecting' if self.failures else 'connecting')
+        result.update(mode=self.mode, session=self.session, lifecycle=lifecycle)
         return result
 
     def _finish(self, entry, result=None, error=None):
@@ -86,13 +94,18 @@ class CommWorker:
         self.wake.set()
         return future
 
-    def begin_jog(self, axis, direction, token, session=None):
+    def begin_jog(self, axis, direction, token, session=None, deadline=None):
         if direction not in (-1, 1) or not token:
             raise ValueError("点动方向或令牌非法")
         with self.lock:
             self._session_check(session)
+            if deadline is not None and time.monotonic() > deadline:
+                raise RuntimeError("点动请求排队已过期，请重新按下")
+            if self.jog_tokens_full or token in self.retired_jog_tokens:
+                raise RuntimeError("点动令牌已撤销或已使用；请重新按下，令牌记录已满时请重新连接")
             if self.jog:
                 raise RuntimeError("已有点动会话，请先停止")
+            self._retire_jog_token(token)
             self.jog = {"axis": axis, "token": token, "proof": time.monotonic(), "seq": None, "counter": 0, "renew": 0}
             try:
                 return self.command(24 if direction == 1 else 25, 1, axis)
@@ -106,9 +119,18 @@ class CommWorker:
             if self.jog and self.jog["token"] == token:
                 self.jog["proof"] = time.monotonic()
 
+    def _retire_jog_token(self, token):
+        if token not in self.retired_jog_tokens:
+            if len(self.retired_jog_tokens) >= MAX_RETIRED_JOG_TOKENS:
+                self.jog_tokens_full = True
+            else:
+                self.retired_jog_tokens.add(token)
+
     def end_jog(self, token=None, session=None):
         with self.lock:
             self._session_check(session)
+            if token is not None:
+                self._retire_jog_token(token)
             if self.jog and (token is None or self.jog["token"] == token):
                 axis = self.jog["axis"]
                 self.jog = None
@@ -145,8 +167,13 @@ class CommWorker:
     def _lost(self, exc):
         with self.lock:
             self.ready = False
+            self.failures += 1
             self.jog = None
             self.session = uuid.uuid4().hex
+            # All old requests carry the invalidated session, so their tokens can
+            # now be forgotten without making any old press eligible again.
+            self.retired_jog_tokens.clear()
+            self.jog_tokens_full = False
             if self.pending:
                 self._finish(self.pending[0], error=f"通信中断，已发送命令结果未知（{exc}）；请到现场确认对象状态")
                 self.pending = None

@@ -133,5 +133,136 @@ class WorkerSafetyTests(unittest.TestCase):
             worker.stop()
 
 
+def test_stopped_before_start_token_never_moves_real_mock():
+    import pytest
+    from backend.service import HmiService
+    service = HmiService()
+    try:
+        state = service.dispatch('POST', '/api/connect', {'mode': 'mock'})
+        session = state['session']
+        service.dispatch('POST', '/api/command', {'code': 20, 'object_type': 1, 'object_index': 0, 'session': session})
+        service.dispatch('POST', '/api/jog/stop', {'token': 'released-first', 'session': session})
+        before = service.state()['axes'][0]['position']
+        with pytest.raises(RuntimeError, match='令牌已撤销'):
+            service.dispatch('POST', '/api/jog/start', {'axis': 0, 'direction': 1, 'token': 'released-first', 'session': session})
+        assert service.host.worker.jog is None
+        assert not service.state()['axes'][0]['running']
+        assert service.state()['axes'][0]['position'] == before
+        # A genuinely new press still works after that cancellation.
+        assert service.dispatch('POST', '/api/jog/start', {'axis': 0, 'direction': 1, 'token': 'new-press', 'session': session})['result'] == 0
+        assert service.state()['axes'][0]['running']
+        service.dispatch('POST', '/api/jog/stop', {'token': 'new-press', 'session': session})
+        assert not service.state()['axes'][0]['running']
+    finally:
+        service.close()
+
+
+def test_jog_cancellation_storage_is_bounded_and_fails_closed():
+    import pytest
+    from backend.comm_worker import CommWorker, MAX_RETIRED_JOG_TOKENS
+    worker = CommWorker(object())
+    for index in range(MAX_RETIRED_JOG_TOKENS + 100):
+        worker.end_jog(str(index))
+    assert len(worker.retired_jog_tokens) == MAX_RETIRED_JOG_TOKENS
+    with pytest.raises(RuntimeError, match='令牌'):
+        worker.begin_jog(0, 1, 'never-seen')
+    with pytest.raises(RuntimeError, match='令牌'):
+        worker.begin_jog(0, 1, '0')
+    assert not worker.queue
+
+
+def test_new_session_resets_token_bound_but_rejects_old_press():
+    import pytest
+    from backend.comm_worker import CommWorker
+    class Offline:
+        def close(self):
+            pass
+    worker = CommWorker(Offline())
+    old_session = worker.session
+    worker.end_jog('old-press')
+    worker.jog_tokens_full = True
+    worker._lost(OSError('mock disconnect'))
+    assert not worker.retired_jog_tokens
+    assert not worker.jog_tokens_full
+    worker.ready = True
+    with pytest.raises(RuntimeError, match='会话已失效'):
+        worker.begin_jog(0, 1, 'old-press', session=old_session)
+    assert not worker.queue
+
+
+def test_bridge_queued_start_rejected_after_stop_or_expiry():
+    import json
+    from threading import Event
+    from PySide6.QtCore import QCoreApplication
+    from backend.service import HmiService
+    from desktop.bridge import HmiBridge
+    app = QCoreApplication.instance() or QCoreApplication([])
+    service = HmiService()
+    bridge = HmiBridge(service)
+    bridge.timer.stop()
+    release = Event()
+    def occupy():
+        assert release.wait(5)
+    blockers = [bridge.commands.submit(occupy) for _ in range(4)]
+    try:
+        state = service.dispatch('POST', '/api/connect', {'mode': 'mock'})
+        session = state['session']
+        service.dispatch('POST', '/api/command', {'code': 20, 'object_type': 1, 'object_index': 0, 'session': session})
+        def request(ident, path, token):
+            bridge.request(json.dumps({'id': ident, 'method': 'POST', 'path': path, 'payload': {
+                'session': session, 'token': token, 'axis': 0, 'direction': 1}}))
+        stopped = Event()
+        dispatch = service.dispatch
+        def track_stop(method, path, payload, **kwargs):
+            result = dispatch(method, path, payload, **kwargs)
+            if path == '/api/jog/stop':
+                stopped.set()
+            return result
+        service.dispatch = track_stop
+        request('start', '/api/jog/start', 'queued-release')
+        request('stop', '/api/jog/stop', 'queued-release')
+        assert stopped.wait(2), 'priority stop did not execute while start was queued'
+        with service.host.worker.lock:
+            assert 'queued-release' in service.host.worker.retired_jog_tokens
+        with bridge.pending_lock:
+            queued = list(bridge.pending)
+        release.set()
+        from fastapi import HTTPException
+        for future in queued:
+            try:
+                future.result(2)
+            except (RuntimeError, HTTPException):
+                pass
+        assert service.host.worker.jog is None
+        assert not service.state()['axes'][0]['running']
+        # Queue age is measured at real bridge admission, not when service begins.
+        for future in blockers:
+            future.result(2)
+        release.clear()
+        blockers = [bridge.commands.submit(occupy) for _ in range(4)]
+        with bridge.pending_lock:
+            previous = set(bridge.pending)
+        request('expired', '/api/jog/start', 'expired')
+        with bridge.pending_lock:
+            expired_requests = list(bridge.pending - previous)
+        time.sleep(0.45)
+        release.set()
+        from fastapi import HTTPException
+        import pytest
+        assert len(expired_requests) == 1
+        with pytest.raises(HTTPException) as error:
+            expired_requests[0].result(2)
+        assert error.value.status_code == 409
+        assert service.host.worker.jog is None
+    finally:
+        release.set()
+        for future in blockers:
+            future.result(2)
+        for pool in (bridge.commands, bridge.controls, bridge.states):
+            pool.shutdown(wait=True)
+        service.close()
+        app.processEvents()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -129,6 +129,14 @@ class CylinderUpgradeTests(unittest.TestCase):
         self.assertIn("udi活动请求 := 0; DoneToken := 0; i目标侧 := 0; Moving := FALSE", driver)
         self.assertNotIn("NOT b上次执行", driver)
 
+    def test_manual_pending_reset_matches_dispatch_permission(self):
+        text = st("03_pou/功能块_气缸调度.st")
+        self.assertNotIn("IF NOT Runtime.bHMI在线 OR Runtime.b待复位", text)
+        self.assertIn("b自动 AND (Runtime.b待复位 OR NOT Runtime.b运行 OR Runtime.b手动)", text)
+        permit = st("03_pou/函数_动作许可.st")
+        gate = permit.split("IF w类别 = 2 THEN\n    IF Resetting", 1)[1].split("RETURN;\nEND_IF;", 1)[0]
+        self.assertIn("IF b自动请求 THEN\n        IF Runtime.b待复位", gate)
+
     def test_mapping_validation_rejects_output_aliasing(self):
         text = st("03_pou/气缸_配置有效.st")
         self.assertIn("FOR i := 0 TO 53", text)

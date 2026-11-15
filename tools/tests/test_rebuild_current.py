@@ -59,10 +59,11 @@ class RebuildTests(unittest.TestCase):
             root_path = pathlib.Path(root)
             (root_path / 'plc/project').mkdir(parents=True)
             (root_path / 'plc/src').mkdir()
-            (root_path / 'plc/project/FM_XJV1.project').write_bytes(b'original')
+            (root_path / 'plc/project/FM_XJV1_Cylinder_v13.project').write_bytes(b'original')
             (root_path / 'plc/src/G.gvl.st').write_text('VAR_GLOBAL\nx:INT;\nEND_VAR')
             called = []
-            obj = types.SimpleNamespace(textual_declaration=types.SimpleNamespace(replace=lambda text: None))
+            obj = types.SimpleNamespace(textual_declaration=types.SimpleNamespace(replace=lambda text: None),
+                                        textual_implementation=types.SimpleNamespace(replace=lambda text: called.append('wrapper')))
             app = types.SimpleNamespace(find=lambda *args: [obj], rebuild=lambda: called.append('rebuild'),
                                         generate_code=lambda: called.append('generate'))
             project = types.SimpleNamespace(active_application=app, close=lambda: called.append('close'),
@@ -72,13 +73,14 @@ class RebuildTests(unittest.TestCase):
             api = types.SimpleNamespace(projects=types.SimpleNamespace(open=lambda *args, **kw: project),
                                         system=system, Severity=types.SimpleNamespace(Error=1, FatalError=2))
             output = str(root_path / 'output')
-            with patch.object(build, 'ROOT', root), patch.dict('os.environ', {'PLC_REBUILD_OUTPUT': output}):
+            with patch.object(build, 'ROOT', root), patch.dict('os.environ', {'PLC_REBUILD_OUTPUT': output}), \
+                    patch.object(build, 'configure_motion_task', side_effect=lambda *args: called.append('task')):
                 self.assertEqual(build.main(api), 1)
             status = json.loads((pathlib.Path(output) / 'build-status.json').read_text())
             self.assertFalse(status['success'])
             self.assertEqual(status['stage'], 'rebuild')
-            self.assertEqual(called, ['rebuild', 'close'])
-            self.assertEqual((root_path / 'plc/project/FM_XJV1.project').read_bytes(), b'original')
+            self.assertEqual(called, ['wrapper', 'task', 'rebuild', 'close'])
+            self.assertEqual((root_path / 'plc/project/FM_XJV1_Cylinder_v13.project').read_bytes(), b'original')
 
     def test_localized_error_and_fatal_block_acceptance(self):
         severity = types.SimpleNamespace(Error=1, FatalError=2)

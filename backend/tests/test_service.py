@@ -61,6 +61,52 @@ def test_close_stops_worker_and_never_reopens(service):
         service.dispatch('POST', '/api/connect', {'mode': 'mock'})
 
 
+def test_cancel_reconnect_while_connected_false_stops_worker(service, monkeypatch):
+    from threading import Event
+    from backend import service as service_module
+    attempts, closed = Event(), Event()
+    class OfflineTransport:
+        def connect(self):
+            attempts.set()
+            raise OSError('mock network unavailable')
+        def close(self):
+            closed.set()
+    monkeypatch.setattr(service_module, 'PlcTransport', lambda *args: OfflineTransport())
+    assert service.state()['lifecycle'] == 'disconnected'
+    state = service.dispatch('POST', '/api/connect', {'mode': 'tcp'})
+    assert attempts.is_set()
+    assert not state['connected']
+    assert state['lifecycle'] == 'reconnecting'
+    worker = service.host.worker
+    result = service.dispatch('POST', '/api/disconnect', {})
+    assert result['lifecycle'] == 'disconnected'
+    assert not result['connected']
+    assert service.host.worker is None
+    assert not worker.thread.is_alive()
+    assert closed.is_set()
+
+
+def test_connecting_lifecycle_is_explicit_before_handshake(service, monkeypatch):
+    from threading import Event
+    from backend import service as service_module
+    entered, release = Event(), Event()
+    class ConnectingTransport:
+        def connect(self):
+            entered.set()
+            assert release.wait(3)
+            raise OSError('mock connect cancelled')
+        def close(self):
+            pass
+    monkeypatch.setattr(service_module, 'PlcTransport', lambda *args: ConnectingTransport())
+    try:
+        state = service.dispatch('POST', '/api/connect', {'mode': 'tcp'})
+        assert entered.is_set()
+        assert not state['connected']
+        assert state['lifecycle'] == 'connecting'
+    finally:
+        release.set()
+
+
 def test_old_queued_jog_cannot_start_after_window_resume(service):
     state = service.dispatch('POST', '/api/connect', {'mode': 'mock'})
     epoch = service.interaction_epoch

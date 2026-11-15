@@ -82,6 +82,18 @@ class MotionSourceTests(unittest.TestCase):
         self.assertIn("PT := T#30s", text)
         self.assertIn("PT := T#180s", text)
 
+    def test_internal_stops_latch_braking_before_erasing_active_command(self):
+        text = st("03_pou/功能块_轴.st")
+        entry = text.index("IF b请求停止 AND (i停止阶段 = 0) THEN")
+        latch = text.index("b停止用停止块 :=", entry)
+        clear = text.index("w激活命令 := 0;", entry)
+        self.assertLess(latch, clear)
+        gate = text.split("b停止可执行 :=", 1)[1].split(";", 1)[0]
+        self.assertNotIn("State.b故障", gate)
+        self.assertIn("NOT fb读状态.Errorstop", gate)
+        late = text[text.index("(* MC调用后才发现的故障"):]
+        self.assertLess(late.index("b停止用停止块 :="), late.index("w激活命令 := 0"))
+
     def test_latched_commands_require_explicit_recovery(self):
         text = st("03_pou/功能块_轴.st")
         self.assertIn("IF NOT b已初始化 THEN", text)

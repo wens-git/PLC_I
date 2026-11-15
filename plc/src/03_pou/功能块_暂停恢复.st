@@ -42,12 +42,16 @@ VAR
     b封锁 : BOOL;
     b全部静止 : BOOL;
     b全部到位 : BOOL;
+    b取消恢复 : BOOL;
+    b恢复动作存在 : BOOL;
+    w许可 : WORD;
     tmr停稳 : TON;
     tmr恢复 : TON;
     i循环 : UINT;
 END_VAR
 
 b恢复中 := FALSE;
+b取消恢复 := (i阶段 = 3) AND (NOT b暂停 OR NOT b请求);
 (* b已抓拍 是锁存状态，不是脉冲：暂停沿/解除时清零，抓拍成功时置位。
    上位机与自测都靠它判断“快照是否有效”，脉冲化会漏读。 *)
 b暂停沿 := b暂停 AND NOT b暂停上周期;
@@ -57,11 +61,32 @@ b请求上周期 := b请求;
 
 (* 安全条件不满足时任何恢复都不成立。 *)
 b封锁 := b急停 OR Runtime.b硬急停 OR Runtime.b软急停;
+IF b请求沿 OR (i阶段 = 3) THEN
+    b封锁 := b封锁 OR NOT Runtime.bHMI在线 OR Runtime.b待复位 OR Runtime.b复位中
+        OR NOT 全局变量_运行配置.b正式流程已接入;
+END_IF;
 FOR i循环 := 0 TO 15 DO
     IF (w已绑定轴 AND SHL(WORD#1, i循环)) <> 0 THEN
         b封锁 := b封锁 OR NOT Runtime.ast轴[i循环].b在线 OR Runtime.ast轴[i循环].b故障;
     END_IF;
 END_FOR;
+(* 先完整预检全部目标，再发任何轴；回位中每扫描继续复核。
+   使用LINT比较，DINT极值两端相减不会溢出。 *)
+IF ((i阶段 = 2) AND b请求沿) OR (i阶段 = 3) THEN
+    FOR i循环 := 0 TO 15 DO
+        IF (w已绑定轴 AND SHL(WORD#1, i循环)) <> 0 THEN
+            IF ab已下发[i循环] OR
+                (ABS(DINT_TO_LINT(Runtime.ast轴[i循环].di位置) - DINT_TO_LINT(adi快照[i循环])) > DINT_TO_LINT(di容差)) THEN
+                w许可 := 函数_动作许可(Code := 27, ObjectWord := WORD#16#0100 OR UINT_TO_WORD(i循环),
+                    HmiOnline := Runtime.bHMI在线, JogBusy := FALSE, Resetting := Runtime.b复位中,
+                    b暂停恢复 := TRUE, b恢复已下发 := (i阶段 = 3) AND ab已下发[i循环],
+                    di恢复目标 := adi快照[i循环], Runtime := Runtime, Store := 全局变量_保持区.Store);
+                b封锁 := b封锁 OR (w许可 <> 0);
+            END_IF;
+        END_IF;
+    END_FOR;
+END_IF;
+IF (i阶段 = 3) AND b封锁 THEN b取消恢复 := TRUE; END_IF;
 
 IF b暂停沿 THEN
     i阶段 := 1;
@@ -105,22 +130,30 @@ CASE i阶段 OF
         (* 暂停期间只监视偏离，不自动动作。 *)
         FOR i循环 := 0 TO 15 DO
             IF (w已绑定轴 AND SHL(WORD#1, i循环)) <> 0 THEN
-                IF (Runtime.ast轴[i循环].di位置 - adi快照[i循环]) > di容差
-                OR (adi快照[i循环] - Runtime.ast轴[i循环].di位置) > di容差 THEN
+                IF ABS(DINT_TO_LINT(Runtime.ast轴[i循环].di位置) - DINT_TO_LINT(adi快照[i循环])) > DINT_TO_LINT(di容差) THEN
                     b曾偏离 := TRUE;
                 END_IF;
             END_IF;
         END_FOR;
         (* 恢复请求只在上升沿处理一次：b请求 是电平，重复处理会每扫描
            重新下发 27，命令槽无法释放，安全封锁时也撤不干净。 *)
+        IF b请求沿 AND b封锁 THEN b恢复失败 := TRUE; END_IF;
         IF b请求沿 AND NOT b封锁 THEN
-            IF b曾偏离 THEN
+            b恢复完成 := FALSE;
+            b恢复失败 := FALSE;
+            b恢复动作存在 := FALSE;
+            FOR i循环 := 0 TO 15 DO
+                IF ((w已绑定轴 AND SHL(WORD#1, i循环)) <> 0)
+                    AND (ABS(DINT_TO_LINT(Runtime.ast轴[i循环].di位置) - DINT_TO_LINT(adi快照[i循环])) > DINT_TO_LINT(di容差)) THEN
+                    b恢复动作存在 := TRUE;
+                END_IF;
+            END_FOR;
+            IF b恢复动作存在 THEN
                 w序列 := w序列 + 1;
                 FOR i循环 := 0 TO 15 DO ab已下发[i循环] := FALSE; END_FOR;
                 FOR i循环 := 0 TO 15 DO
                     IF (w已绑定轴 AND SHL(WORD#1, i循环)) <> 0 THEN
-                        IF (Runtime.ast轴[i循环].di位置 - adi快照[i循环]) > di容差
-                        OR (adi快照[i循环] - Runtime.ast轴[i循环].di位置) > di容差 THEN
+                        IF ABS(DINT_TO_LINT(Runtime.ast轴[i循环].di位置) - DINT_TO_LINT(adi快照[i循环])) > DINT_TO_LINT(di容差) THEN
                             (* 回位参数取保持配置，与命令 27 的下发参数同源。 *)
                             Runtime.adi轴目标[i循环] := adi快照[i循环];
                             Runtime.audi轴速度[i循环] := DWORD_TO_UDINT(
@@ -160,30 +193,31 @@ CASE i阶段 OF
             END_IF;
         END_FOR;
         tmr恢复(IN := TRUE, PT := T#120s);
-        IF b封锁 OR tmr恢复.Q THEN
+        IF b取消恢复 OR b封锁 OR tmr恢复.Q THEN
+            b取消恢复 := TRUE;
             b恢复失败 := TRUE;
             b恢复中 := FALSE;
             i阶段 := 2;
         ELSIF b全部到位 THEN
+            FOR i循环 := 0 TO 15 DO ab已下发[i循环] := FALSE; END_FOR;
             b恢复完成 := TRUE;
             b恢复中 := FALSE;
             i阶段 := 2;
         END_IF;
 END_CASE;
-ui内部阶段 := i阶段;
-
-(* 封锁时撤销本块下发的 26/27，避免安全状态下留下未消费动作。 *)
-IF b封锁 THEN
+(* 清命令槽不能取消轴内已锁存的27；主动发26并使用新序列。 *)
+IF b取消恢复 THEN
+    w序列 := w序列 + 1;
     FOR i循环 := 0 TO 15 DO
-        IF (Runtime.aw轴序列[i循环] = w序列)
-        AND ((Runtime.aw轴命令[i循环] = 26) OR (Runtime.aw轴命令[i循环] = 27)) THEN
-            Runtime.aw轴命令[i循环] := 0;
+        IF ab已下发[i循环] THEN
+            Runtime.aw轴命令[i循环] := 26;
+            Runtime.aw轴序列[i循环] := w序列;
+            ab已下发[i循环] := FALSE;
         END_IF;
     END_FOR;
     b恢复中 := FALSE;
-    IF i阶段 = 3 THEN
-        b恢复失败 := TRUE;
-        i阶段 := 2;
-    END_IF;
+    b恢复完成 := FALSE;
+    b恢复失败 := TRUE;
 END_IF;
+ui内部阶段 := i阶段;
 END_FUNCTION_BLOCK

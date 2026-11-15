@@ -160,9 +160,6 @@ b释放周期 := FALSE;
 IF b新命令 THEN
     IF (Code = 21) OR (Code = 26) THEN
         b请求停止 := TRUE;
-        (* 只有定位/回原/清零在动时才用 MC_Stop；点动停止只要撤销点动请求，
-           开环脉冲轴在无效状态上调用 MC_Stop 会直接进 ErrorStop。 *)
-        b停止用停止块 := (w激活命令 = 22) OR (w激活命令 = 27) OR (w激活命令 = 30);
         IF Code = 21 THEN b待去使能 := TRUE; END_IF;
     ELSIF (Code = 23) AND NOT HardEstop AND BusOperational AND b反馈有效
         AND NOT b执行复位 AND NOT fb复位.Busy AND NOT fb复位.Done AND NOT fb复位.Error THEN
@@ -179,6 +176,8 @@ IF b新命令 THEN
             State.w序列 := Sequence;
             State.w运动结果 := 1;
         ELSIF b物理静止 THEN
+            b请求上电 := FALSE;
+            b待去使能 := FALSE;
             State.b故障 := FALSE;
             State.w错误码 := 0;
             State.dw驱动错误 := 0;
@@ -276,6 +275,12 @@ IF w新故障 <> 0 THEN
 END_IF;
 
 IF b请求停止 AND (i停止阶段 = 0) THEN
+    (* 所有停止入口在清除活动命令之前锁定制动需要，包括硬限位和软件故障。
+       点动撤销Jog后由其减速；其余实际运动必须交给MC_Stop。 *)
+    b停止用停止块 := (w激活命令 = 22) OR (w激活命令 = 27) OR (w激活命令 = 30)
+        OR (b反馈有效 AND (fb读状态.Homing OR fb读状态.DiscreteMotion
+            OR fb读状态.SynchronizedMotion
+            OR (fb读状态.ContinuousMotion AND NOT (b正向点动 OR b负向点动))));
     i停止阶段 := 1;
     IF (StopDeceleration > 0) AND (StopDeceleration <= UDINT#2147483647) THEN
         lr锁定停止减速度 := UDINT_TO_LREAL(StopDeceleration) / 1000.0;
@@ -361,11 +366,15 @@ fb清零(Axis := Axis, Execute := b执行清零, Position := 0.0, Mode := FALSE)
 (* 参考原程序：无效轴状态（未使能/报警/ErrorStop/掉线）下不能把 Execute 送进
    MC_Stop / MC_Jog，否则库返回 ErrorID=16#22，会被误报成 1122/1124。
    进入无效态时先撤销 Execute，再由故障/安全路径处理。 *)
-b停止可执行 := b执行停止 AND State.b在线 AND NOT State.b故障 AND b反馈有效
+(* 软件故障是制动原因，不能禁止制动；仅真实驱动状态决定MC_Stop可调用性。 *)
+b停止可执行 := b执行停止 AND State.b在线 AND b反馈有效
     AND fb上电.Status AND NOT fb读状态.Errorstop;
 IF b执行停止 AND NOT b停止可执行 THEN
     b执行停止 := FALSE;
     i停止阶段 := 0;
+    b请求上电 := FALSE;
+    b待去使能 := FALSE;
+    b需恢复 := TRUE;
     b释放周期 := TRUE;
 END_IF;
 IF (NOT State.b在线) OR State.b故障 OR (NOT fb上电.Status) OR fb读状态.Errorstop THEN
@@ -394,8 +403,9 @@ IF b执行复位 AND fb复位.Done THEN
     b需恢复 := FALSE;
     State.w运动结果 := 2;
     b释放周期 := TRUE;
-    (* 复位即重新上电：MC_Reset 成功后自动使能，与清故障路径一致。 *)
-    b请求上电 := TRUE;
+    (* 清故障只清报警；独立命令20才可重新使能。 *)
+    b请求上电 := FALSE;
+    b待去使能 := FALSE;
 END_IF;
 IF ((w激活命令 = 27) AND fb运动.Done) OR ((w激活命令 = 22) AND fb回原.Done)
     OR ((w激活命令 = 30) AND fb清零.Done) THEN
@@ -464,6 +474,13 @@ IF w新故障 <> 0 THEN
     State.b已回原 := FALSE;
     State.w运动结果 := 3;
     b需恢复 := TRUE;
+    (* MC调用后才发现的故障，也必须在清活动命令前保存制动方式。 *)
+    IF i停止阶段 = 0 THEN
+        b停止用停止块 := (w激活命令 = 22) OR (w激活命令 = 27) OR (w激活命令 = 30)
+            OR (b反馈有效 AND (fb读状态.Homing OR fb读状态.DiscreteMotion
+                OR fb读状态.SynchronizedMotion
+                OR (fb读状态.ContinuousMotion AND NOT (b正向点动 OR b负向点动))));
+    END_IF;
     b执行复位 := FALSE;
     b执行运动 := FALSE;
     b执行回原 := FALSE;

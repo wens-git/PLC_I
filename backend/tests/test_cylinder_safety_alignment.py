@@ -27,7 +27,9 @@ def test_timeout_preserves_only_vacuum_outputs_until_explicit_cancel(mode, code)
     plc.tick(1)
     assert state(plc)['alarm_code'] == 2140
     assert not state(plc)['moving']
-    expected = before if mode in (2, 3) else [False] * 56
+    expected = list(before) if mode in (2, 3) else [False] * 56
+    if mode == 3:
+        expected[plc.cylinders[0]['config']['home_y']] = False
     assert plc.snapshot()['io']['y'] == expected
     plc.tick(100)
     assert plc.snapshot()['io']['y'] == expected

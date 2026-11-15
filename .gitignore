@@ -14,5 +14,6 @@ App/
 *.bootinfo
 *.bootinfo_guids
 *.opt
+*.lock
 !web/dist/
 !web/dist/**

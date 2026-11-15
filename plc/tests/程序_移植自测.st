@@ -131,6 +131,28 @@ CASE ui阶段 OF
         b首次进入 := FALSE;
         b等待中 := TRUE;
         st运行时.w轴消费掩码 := 7;
+        st运行时.bHMI在线 := TRUE;
+        st运行时.b待复位 := FALSE;
+        st运行时.b暂停 := TRUE;
+        FOR i循环 := 0 TO 2 DO
+            全局变量_保持区.Store.aw轴配置[i循环, 0] := 0;
+            全局变量_保持区.Store.aw轴配置[i循环, 1] := 10000;
+            全局变量_保持区.Store.aw轴配置[i循环, 2] := WORD#16#FFFF;
+            全局变量_保持区.Store.aw轴配置[i循环, 3] := WORD#16#D8F0;
+            全局变量_保持区.Store.aw轴配置[i循环, 14] := 1;
+            全局变量_保持区.Store.aw轴配置[i循环, 4] := 0;
+            全局变量_保持区.Store.aw轴配置[i循环, 5] := 1000;
+            全局变量_保持区.Store.aw轴配置[i循环, 6] := 0;
+            全局变量_保持区.Store.aw轴配置[i循环, 7] := 1000;
+            全局变量_保持区.Store.aw轴配置[i循环, 8] := 0;
+            全局变量_保持区.Store.aw轴配置[i循环, 9] := 1000;
+            全局变量_保持区.Store.aw轴配置[i循环, 10] := 0;
+            全局变量_保持区.Store.aw轴配置[i循环, 11] := 1000;
+            全局变量_保持区.Store.aw轴配置[i循环, 12] := 0;
+            全局变量_保持区.Store.aw轴配置[i循环, 13] := 1000;
+            st运行时.ast轴[i循环].b已使能 := TRUE;
+            st运行时.ast轴[i循环].b可下发 := TRUE;
+        END_FOR;
         b急停测试 := FALSE;
         b恢复请求 := FALSE;
         FOR i循环 := 0 TO 2 DO
@@ -169,9 +191,7 @@ CASE ui阶段 OF
         st运行时.ast轴[0].w运动结果 := 0;
         b恢复请求 := TRUE;
         END_IF;
-        (* 恢复请求只在一个扫描为真：等待结束后下一扫描即撤销。 *)
-        IF b恢复请求脉冲已发 THEN b恢复请求 := FALSE; b恢复请求脉冲已发 := FALSE; END_IF;
-        IF b恢复请求 THEN b恢复请求脉冲已发 := TRUE; END_IF;
+        (* 恢复请求保持到完成，撤销请求将主动停止正在回位的轴。 *)
     17:
         b检查 := TRUE;
         b正常 := (st运行时.aw轴命令[0] = 27) AND (st运行时.adi轴目标[0] = 1000);
@@ -192,11 +212,44 @@ CASE ui阶段 OF
         (* 急停：必须封锁并撤销本块下发的命令。 *)
         b恢复请求 := FALSE;
         st运行时.ast轴[0].di位置 := 3000;
+        st运行时.aw轴命令[0] := 0; (* 服务端每扫描清命令槽 *)
         b急停测试 := TRUE;
     21: ;
     22:
         b检查 := TRUE; b正常 := st运行时.aw轴命令[0] = 0;
     23:
+        b急停测试 := FALSE;
+        st运行时.aw轴命令[0] := 0;
+        st运行时.b待复位 := TRUE;
+        b恢复请求 := TRUE;
+    24:
+        b检查 := TRUE; b正常 := fb暂停.b恢复失败 AND (st运行时.aw轴命令[0] = 0);
+        b恢复请求 := FALSE;
+        st运行时.b待复位 := FALSE;
+        (* 快照1000在新软限位之外，即使其他条件满足仍不得回位。 *)
+        全局变量_保持区.Store.aw轴配置[0, 3] := 1500;
+        全局变量_保持区.Store.aw轴配置[0, 2] := 0;
+    25:
+        b恢复请求 := TRUE;
+    26:
+        b检查 := TRUE; b正常 := fb暂停.b恢复失败 AND (st运行时.aw轴命令[0] = 0);
+        b恢复请求 := FALSE;
+        全局变量_保持区.Store.aw轴配置[0, 2] := WORD#16#FFFF;
+        全局变量_保持区.Store.aw轴配置[0, 3] := WORD#16#D8F0;
+    27:
+        b恢复请求 := TRUE;
+    28:
+        b检查 := TRUE; b正常 := st运行时.aw轴命令[0] = 27;
+        st运行时.aw轴命令[0] := 0; (* emulate server clearing pulse slot *)
+        st运行时.ast轴[0].b运动中 := TRUE;
+        st运行时.ast轴[0].b静止 := FALSE;
+        st运行时.ast轴[0].b可下发 := FALSE;
+    29:
+        (* 本动作自身Busy不可被持续复核误判成失许可。 *)
+        b检查 := TRUE; b正常 := fb暂停.b恢复中 AND NOT fb暂停.b恢复失败;
+        st运行时.bHMI在线 := FALSE;
+    30:
+        b检查 := TRUE; b正常 := fb暂停.b恢复失败 AND (st运行时.aw轴命令[0] = 26);
         b完成 := TRUE;
 END_CASE;
 

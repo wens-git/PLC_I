@@ -1,0 +1,25 @@
+{
+  "python_tests": {
+    "status": "passed",
+    "evidence": "Validation/review-fix-python.json"
+  },
+  "frontend_tests": {
+    "status": "passed",
+    "evidence": "Validation/review-fix-frontend.json"
+  },
+  "protocol_check": {
+    "status": "passed",
+    "evidence": "Validation/review-fix-protocol.json"
+  },
+  "source_smoke": {
+    "status": "passed",
+    "evidence": "Validation/review-fix-source-smoke.json"
+  },
+  "packaged_smoke": {
+    "status": "passed",
+    "evidence": "Validation/review-fix-packaged-smoke.json"
+  },
+  "real_plc_acceptance": {
+    "status": "not_run"
+  }
+}

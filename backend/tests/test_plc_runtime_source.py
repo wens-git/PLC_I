@@ -130,6 +130,24 @@ class RuntimeSourceTests(unittest.TestCase):
                       "NOT b待验证", "NOT fb运动.Done", "NOT fb停止.Done"):
             self.assertIn(token, ready)
 
+    def test_pause_recovery_uses_permission_and_cancels_latched_motion(self):
+        pause = source("03_pou/功能块_暂停恢复.st")
+        permit = source("03_pou/函数_动作许可.st")
+        self.assertLess(pause.index("w许可 := 函数_动作许可"), pause.index("Runtime.aw轴命令[i循环] := 27"))
+        self.assertIn("b恢复已下发 := (i阶段 = 3) AND ab已下发[i循环]", pause)
+        cancel = pause.split("IF b取消恢复 THEN", 1)[1]
+        self.assertIn("Runtime.aw轴命令[i循环] := 26", cancel)
+        self.assertNotIn("Runtime.aw轴命令[i循环] := 0", cancel)
+        self.assertIn("di恢复目标 < di负限位", permit)
+        self.assertIn("di恢复目标 > di正限位", permit)
+        self.assertIn("IF NOT Runtime.b暂停 THEN", permit)
+        self.assertIn("IF NOT Runtime.b运行 OR Runtime.b暂停 THEN", permit)
+
+    def test_physical_start_and_resume_require_integrated_process(self):
+        main = source("04_program/程序_主循环.st")
+        self.assertIn("b启动按钮 := fb启动滤波.b滤波信号 AND 全局变量_运行配置.b正式流程已接入", main)
+        self.assertIn("b复位事件 AND 全局变量_运行配置.b正式流程已接入", main)
+
     def test_zero_requires_power_and_fault_reset_is_retryable(self):
         permit = source("03_pou/函数_动作许可.st")
         enabled = permit[permit.index("IF ((Code = 22)"):permit.index("AND NOT Runtime.ast轴[ui轴号].b已使能")]

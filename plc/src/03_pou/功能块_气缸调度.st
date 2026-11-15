@@ -16,8 +16,8 @@ FOR i := 0 TO 53 DO
     b绑定 := (lw已绑定气缸 AND SHL(LWORD#1, i)) <> 0;
     by取消 := 0;
     IF Runtime.b暂停 THEN by取消 := 1; END_IF;
-    IF NOT Runtime.bHMI在线 OR Runtime.b待复位 OR Runtime.b复位中
-        OR (全局变量_气缸请求.ast请求[i].b自动 AND (NOT Runtime.b运行 OR Runtime.b手动))
+    IF NOT Runtime.bHMI在线 OR Runtime.b复位中
+        OR (全局变量_气缸请求.ast请求[i].b自动 AND (Runtime.b待复位 OR NOT Runtime.b运行 OR Runtime.b手动))
         OR (NOT 全局变量_气缸请求.ast请求[i].b自动 AND NOT Runtime.b手动) THEN
         by取消 := 1;
     END_IF;

@@ -1,0 +1,34 @@
+{
+  "offline_only": true, 
+  "verified_objects": 56, 
+  "task_owner": "EtherCAT_Task", 
+  "entry_program": "PLC_PRG -> \u7a0b\u5e8f_\u4e3b\u5faa\u73af", 
+  "task_call_count": 1, 
+  "bus_bindings": [
+    {
+      "task": "EtherCAT_Task", 
+      "device": "HIGH_SPEED_IO"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "EtherCAT"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "EtherCAT"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "Ethernet"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "Ethernet"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "ModbusTCP_Slave_XJV1"
+    }
+  ], 
+  "success": true
+}

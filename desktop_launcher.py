@@ -52,24 +52,11 @@ def main():
         data_dir.mkdir(parents=True, exist_ok=True)
     handler = RotatingFileHandler(data_dir / 'desktop.log', maxBytes=2_000_000, backupCount=3, encoding='utf-8')
     logging.basicConfig(level=logging.INFO, handlers=[handler], format='%(asctime)s %(levelname)s %(message)s')
-    # One desktop instance per installation. Try writable candidates in order so a
-    # packaged EXE with a restricted profile still starts; every real duplicate
-    # fails on the same first writable candidate.
+    # Fall back only when a lock path cannot be opened. A held byte lock is
+    # conclusive even when a later candidate is writable.
     candidates = [Path(sys.executable).resolve().parent if getattr(sys, 'frozen', False)
                   else ROOT, data_dir, Path(os.getenv('LOCALAPPDATA', str(Path.home()))) / 'FM_GPTPRO']
-    lock = None
-    lock_errors = []
-    for candidate in candidates:
-        try:
-            candidate.mkdir(parents=True, exist_ok=True)
-        except OSError as error:
-            lock_errors.append(f'{candidate}: {error}')
-            continue
-        attempt = InstanceLock(candidate / 'desktop.lock')
-        if attempt.acquire():
-            lock, lock_dir = attempt, candidate
-            break
-        lock_errors.append(f'{candidate}: {attempt.error}')
+    lock, lock_errors = InstanceLock.acquire_candidates(candidates)
     if lock is None:
         logging.error('Desktop lock failed: %s', '; '.join(lock_errors))
         if args.smoke_report:
@@ -77,7 +64,7 @@ def main():
             return 1
         QMessageBox.information(None, 'FM_GPTPRO', '设备控制台已经运行或无法取得应用锁，请检查桌面日志。')
         return 1
-    logging.info('Desktop lock acquired in %s', lock_dir)
+    logging.info('Desktop lock acquired in %s', lock.path.parent)
     web_root = ROOT / 'web/dist'
     if not (web_root / 'index.html').is_file():
         QMessageBox.critical(None, '资源缺失', '界面资源缺失，请先运行 web 目录下的 npm run build。')

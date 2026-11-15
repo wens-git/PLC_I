@@ -9,6 +9,9 @@ VAR_INPUT
     Resetting : BOOL;
     b自动请求 : BOOL := FALSE;
     b气缸已受理 : BOOL := FALSE; (* 仅驱动消费时复核当前许可 *)
+    b暂停恢复 : BOOL := FALSE; (* 仅暂停恢复FB的轴27，允许在暂停状态回快照 *)
+    b恢复已下发 : BOOL := FALSE; (* 持续复核时忽略本动作自身的Busy *)
+    di恢复目标 : DINT := 0;
 END_VAR
 VAR_IN_OUT
     Runtime : 结构体_运行时;
@@ -39,6 +42,9 @@ IF (w类别 > 3) OR ((w类别 = 0) AND (ui对象索引 <> 0))
 OR ((w类别 = 1) AND (ui对象索引 >= 16))
 OR ((w类别 = 2) AND (ui对象索引 >= 54))
 OR ((w类别 = 3) AND (ui对象索引 >= 120)) THEN
+    函数_动作许可 := ERR_非法; RETURN;
+END_IF;
+IF b暂停恢复 AND ((w类别 <> 1) OR (Code <> 27)) THEN
     函数_动作许可 := ERR_非法; RETURN;
 END_IF;
 ui轴号 := ui对象索引;
@@ -202,7 +208,24 @@ IF Runtime.ast轴[ui轴号].b故障 AND (Code <> 21) AND (Code <> 23)
     AND (Code <> 31) AND (Code <> 50) THEN
     函数_动作许可 := ERR_故障; RETURN;
 END_IF;
-IF b自动请求 THEN
+IF b暂停恢复 THEN
+    (* 恢复有独立模式条件；不能借普通自动许可放开暂停中的其他命令。 *)
+    IF NOT 全局变量_运行配置.b正式流程已接入 THEN 函数_动作许可 := ERR_正式流程; RETURN; END_IF;
+    (* 运行控制在暂停时发布手动模式，恢复仍以暂停握手为准。 *)
+    IF NOT Runtime.b暂停 THEN 函数_动作许可 := ERR_模式; RETURN; END_IF;
+    IF Runtime.b待复位 THEN 函数_动作许可 := ERR_待复位; RETURN; END_IF;
+    di正限位 := DWORD_TO_DINT(SHL(WORD_TO_DWORD(Store.aw轴配置[ui轴号, 0]), 16) OR WORD_TO_DWORD(Store.aw轴配置[ui轴号, 1]));
+    di负限位 := DWORD_TO_DINT(SHL(WORD_TO_DWORD(Store.aw轴配置[ui轴号, 2]), 16) OR WORD_TO_DWORD(Store.aw轴配置[ui轴号, 3]));
+    IF (Store.aw轴配置[ui轴号, 14] AND 1) <> 0 THEN
+        IF (di负限位 >= di正限位) OR (di恢复目标 < di负限位) OR (di恢复目标 > di正限位) THEN
+            函数_动作许可 := ERR_软限位; RETURN;
+        END_IF;
+    END_IF;
+    IF ((di恢复目标 > Runtime.ast轴[ui轴号].di位置) AND ((Runtime.ast轴[ui轴号].w限位 AND 5) <> 0))
+        OR ((di恢复目标 < Runtime.ast轴[ui轴号].di位置) AND ((Runtime.ast轴[ui轴号].w限位 AND 10) <> 0)) THEN
+        函数_动作许可 := ERR_故障; RETURN;
+    END_IF;
+ELSIF b自动请求 THEN
     IF NOT 全局变量_运行配置.b正式流程已接入 THEN 函数_动作许可 := ERR_正式流程; RETURN; END_IF;
     IF NOT Runtime.b运行 OR Runtime.b暂停 THEN 函数_动作许可 := ERR_模式; RETURN; END_IF;
     IF Runtime.b待复位 THEN 函数_动作许可 := ERR_待复位; RETURN; END_IF;
@@ -213,10 +236,12 @@ AND NOT Runtime.ast轴[ui轴号].b已使能 THEN 函数_动作许可 := ERR_未�
 (* 清故障在报警态必须可重试：轴停在 ErrorStop 时 b运动中 可能因残留停止阶段为真，
    若因此拒绝 23，现场就永远清不掉。复位本身仍要求 MC_Reset 成功。 *)
 IF (Code >= 20) AND (Code <= 30) AND (Code <> 21)
+AND NOT (b暂停恢复 AND b恢复已下发)
 AND NOT Runtime.ast轴[ui轴号].b可下发 THEN
     函数_动作许可 := ERR_忙; RETURN;
 END_IF;
-IF (Runtime.ast轴[ui轴号].b运动中 OR NOT Runtime.ast轴[ui轴号].b静止) AND (Code <> 21) AND (Code <> 23) THEN
+IF (Runtime.ast轴[ui轴号].b运动中 OR NOT Runtime.ast轴[ui轴号].b静止) AND (Code <> 21) AND (Code <> 23)
+    AND NOT (b暂停恢复 AND b恢复已下发) THEN
     函数_动作许可 := ERR_忙; RETURN;
 END_IF;
 IF (Code = 24) OR (Code = 25) THEN

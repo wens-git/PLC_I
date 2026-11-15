@@ -1,6 +1,7 @@
 """Asynchronous, bounded QWebChannel adapter. Qt never performs PLC I/O."""
 import json
 import logging
+import time
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread, Lock
 
@@ -55,24 +56,27 @@ class HmiBridge(QObject):
             payload = packet.get('payload', {})
             epoch = self.service.interaction_epoch
             # Stop and renew must remain runnable while ordinary requests wait for ACK.
-            priority = path in ('/api/jog/stop', '/api/jog/renew') or (
+            priority = path in ('/api/jog/stop', '/api/jog/renew', '/api/disconnect') or (
                 path == '/api/command' and isinstance(payload, dict) and payload.get('code') in (9, 10, 26, 42))
             with self.pending_lock:
                 if len(self.pending) >= (48 if priority else 40):
                     raise HTTPException(429, '请求队列已满，请等待当前操作完成')
             pool = self.controls if priority else self.commands
             page_epoch = self.page_epoch
-            future = pool.submit(self._execute, method, path, payload, epoch, page_epoch)
+            jog_deadline = time.monotonic() + 0.4 if path == '/api/jog/start' else None
+            future = pool.submit(self._execute, method, path, payload, epoch, page_epoch, jog_deadline)
             with self.pending_lock:
                 self.pending.add(future)
             future.add_done_callback(lambda completed: self._reply(request_id, completed, page_epoch))
         except Exception as error:
             self.response.emit(self._encode_error(request_id, error))
 
-    def _execute(self, method, path, payload, epoch, page_epoch):
+    def _execute(self, method, path, payload, epoch, page_epoch, jog_deadline=None):
         if self.closing or page_epoch != self.page_epoch:
             raise HTTPException(409, '页面已变化，请重新操作')
-        return self.service.dispatch(method, path, payload, interaction_epoch=epoch)
+        if jog_deadline is not None and time.monotonic() > jog_deadline:
+            raise HTTPException(409, '点动请求排队已过期，请重新按下')
+        return self.service.dispatch(method, path, payload, interaction_epoch=epoch, jog_deadline=jog_deadline)
 
     @staticmethod
     def _encode_error(request_id, error):

@@ -385,6 +385,11 @@ class MockPlc:
             if cylinder["config"][side + "_x"] == 65535:
                 cylinder[side] = False
         if preserve_fault_outputs:
+            # Retain adsorption only; faulted release must never keep blowing.
+            if cylinder["config"]["wiring_flags"] & 3 == 3:
+                output = cylinder["config"]["home_y"]
+                if 0 <= output < len(self._outputs):
+                    self._outputs[output] = False
             return
         if hold_outputs and cylinder["config"]["wiring_flags"] & 3 == 3:
             output = cylinder["config"]["home_y"]

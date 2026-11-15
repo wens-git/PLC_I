@@ -54,12 +54,16 @@ class CylinderSafetyFixTests(unittest.TestCase):
         branch = axis[axis.index("ELSIF (Code = 23)"):axis.index("ELSIF b可接收")]
         self.assertNotIn("b请求上电 := TRUE", branch)
         self.assertIn("不自动使能", branch)
+        done = axis.split("IF b执行复位 AND fb复位.Done THEN", 1)[1].split("END_IF;", 1)[0]
+        self.assertNotIn("b请求上电 := TRUE", done)
+        self.assertIn("b请求上电 := FALSE", done)
 
     def test_vacuum_timeout_keeps_adsorption_outputs(self):
         driver = st("03_pou/功能块_气缸.st")
         timeout = driver[driver.index("IF tmr运动.Q THEN"):]
         self.assertIn("IF (ValveType <> 2) AND (ValveType <> 3) THEN", timeout)
         self.assertIn("WorkOutput := FALSE; OriginOutput := FALSE;", timeout)
+        self.assertIn("ELSIF ValveType = 3 THEN\n        OriginOutput := FALSE", timeout)
 
     def test_fault_cancel_keeps_vacuum_but_drops_ordinary_valves(self):
         driver = st("03_pou/功能块_气缸.st")
@@ -76,8 +80,10 @@ class CylinderSafetyFixTests(unittest.TestCase):
 
     def test_cross_cylinder_input_duplicates_are_rejected(self):
         text = st("03_pou/气缸_配置有效.st")
-        self.assertIn("FOR j := 1 TO 4 DO", text)
-        self.assertIn("FOR k := 1 TO 4 DO", text)
+        for bounds in ("1 TO 2", "3 TO 4"):
+            self.assertIn(f"FOR j := {bounds} DO", text)
+            self.assertIn(f"FOR k := {bounds} DO", text)
+        self.assertNotIn("FOR j := 1 TO 4 DO", text)
         self.assertIn("WORD_TO_UINT(Store.aw气缸配置[缸号, i]) >= ui气缸输出点数", text)
         self.assertIn("WORD_TO_UINT(Store.aw气缸配置[缸号, i]) >= ui气缸输入点数", text)
 

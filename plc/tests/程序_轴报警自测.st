@@ -15,6 +15,10 @@ VAR
     Pulse : FB_AxisUnderTest;
     States : ARRAY[0..5] OF 结构体_轴状态;
     PulseState : 结构体_轴状态;
+    LimitStop : FB_AxisUnderTest;
+    SoftwareStop : FB_AxisUnderTest;
+    LimitState : 结构体_轴状态;
+    SoftwareState : 结构体_轴状态;
 END_VAR
 
 CASE Step OF
@@ -73,7 +77,47 @@ CASE Step OF
     Fault(Axis := DummyAxis, State := States[1], Code := 23, Sequence := 3);
     IF Fault.fb复位.Execute AND NOT Fault.fb上电.Enable THEN Passed := Passed + 1;
     ELSE Failed := Failed + 1; END_IF;
-    Done := TRUE;
+    LimitStop(Axis := DummyAxis, State := LimitState, Code := 0);
+    SoftwareStop(Axis := DummyAxis, State := SoftwareState, Code := 0);
     Step := 4;
+4:
+    LimitStop(Axis := DummyAxis, State := LimitState, Code := 20, Sequence := 1);
+    SoftwareStop(Axis := DummyAxis, State := SoftwareState, Code := 20, Sequence := 1);
+    Fault.fb复位.Done := TRUE;
+    Fault.fb读状态.Errorstop := FALSE;
+    Fault(Axis := DummyAxis, State := States[1], Code := 0);
+    IF NOT Fault.b请求上电 AND NOT States[1].b已使能 AND NOT States[1].b故障 THEN Passed := Passed + 1;
+    ELSE Failed := Failed + 1; END_IF;
+    Step := 5;
+5:
+    LimitStop(Axis := DummyAxis, State := LimitState, Code := 27, Sequence := 2,
+        Target := 10000, Speed := 5000, Acceleration := 2000, Deceleration := 3000);
+    SoftwareStop(Axis := DummyAxis, State := SoftwareState, Code := 27, Sequence := 2,
+        Target := 10000, Speed := 5000, Acceleration := 2000, Deceleration := 3000);
+    Step := 6;
+6:
+    LimitStop.fb读状态.StandStill := FALSE;
+    LimitStop.fb读状态.DiscreteMotion := TRUE;
+    LimitStop.fb读速度.Velocity := 1.0;
+    LimitStop(Axis := DummyAxis, State := LimitState, Code := 0, PositiveLimit := TRUE);
+    IF LimitStop.fb停止.Execute AND NOT LimitStop.b执行运动 AND (LimitStop.w激活命令 = 0) THEN Passed := Passed + 1;
+    ELSE Failed := Failed + 1; END_IF;
+    SoftwareStop.fb读状态.StandStill := FALSE;
+    SoftwareStop.fb读状态.DiscreteMotion := TRUE;
+    SoftwareStop.fb读速度.Velocity := 1.0;
+    SoftwareStop.fb读位置.Position := LREAL#3000000; (* conversion fault while physically moving *)
+    SoftwareStop(Axis := DummyAxis, State := SoftwareState, Code := 0);
+    (* Position invalid prevents MC_Stop: power must be removed rather than leave motion enabled. *)
+    IF SoftwareState.b故障 AND NOT SoftwareStop.b请求上电 THEN Passed := Passed + 1;
+    ELSE Failed := Failed + 1; END_IF;
+    Step := 7;
+7:
+    (* 软件报警本身不能阻止有效驱动制动。 *)
+    LimitState.b故障 := TRUE;
+    LimitStop(Axis := DummyAxis, State := LimitState, Code := 0);
+    IF LimitStop.fb停止.Execute AND LimitStop.b请求上电 THEN Passed := Passed + 1;
+    ELSE Failed := Failed + 1; END_IF;
+    Done := TRUE;
+    Step := 8;
 END_CASE;
 END_PROGRAM

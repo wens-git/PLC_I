@@ -8,6 +8,11 @@ VAR
     w失败 : WORD;
     b完成 : BOOL;
     t等待 : TON;
+    st配置 : 结构体_配置;
+    fb调度 : 功能块_气缸调度;
+    st运行时 : 结构体_运行时;
+    lw原绑定 : LWORD;
+    i : UINT;
     udi夹紧请求号 : UDINT; (* 业务示例：保存 Cy动点(Cy夹紧) 返回值 *)
 END_VAR
 CASE ui阶段 OF
@@ -82,6 +87,94 @@ CASE ui阶段 OF
 16:
     fb(Execute := TRUE, Token := 7, Code := 42);
     IF fb.Fault OR fb.WorkOutput OR fb.OriginOutput OR (fb.DoneToken <> 0) THEN w失败 := 13; END_IF;
+    ui阶段 := 17;
+17:
+    (* 释放动作未见原点：超时应立即关破真空，不能等待下扫描。 *)
+    fb(Execute := TRUE, Token := 8, Code := 41, SensorWork := FALSE, SensorOrigin := FALSE,
+        DelayMs := 0, HomeDelayMs := 0, TimeoutMs := 40);
+    IF NOT fb.OriginOutput THEN w失败 := 14; END_IF;
+    ui阶段 := 18;
+18:
+    fb(Execute := FALSE);
+    IF fb.Fault THEN
+        IF (fb.Error <> 2140) OR fb.OriginOutput OR fb.WorkOutput OR fb.Moving THEN w失败 := 15; END_IF;
+        ui阶段 := 19;
+    END_IF;
+19:
+    fb(Execute := TRUE, Token := 9, Code := 42);
+    fb(Execute := TRUE, Token := 10, Code := 41);
+    IF NOT fb.OriginOutput THEN w失败 := 16; END_IF;
+    ui阶段 := 20;
+20:
+    (* 释放中的双传感器冲突同样关破真空。 *)
+    fb(Execute := FALSE, SensorWork := TRUE, SensorOrigin := TRUE);
+    IF NOT fb.Fault OR (fb.Error <> 2110) OR fb.OriginOutput THEN w失败 := 17; END_IF;
+    ui阶段 := 21;
+21:
+    fb(Execute := TRUE, Token := 11, Code := 42, SensorWork := FALSE, SensorOrigin := FALSE);
+    fb(Execute := TRUE, Token := 12, Code := 40);
+    ui阶段 := 22;
+22:
+    (* 吸附超时保持原吸附输出，但绝不打开破真空。 *)
+    fb(Execute := FALSE);
+    IF fb.Fault THEN
+        IF (fb.Error <> 2140) OR NOT fb.WorkOutput OR fb.OriginOutput THEN w失败 := 18; END_IF;
+        ui阶段 := 23;
+    END_IF;
+23:
+    (* 独立配置调用：DO0/DI0允许跨空间重号，同空间跨缸别名拒绝。 *)
+    lw原绑定 := lw已绑定气缸;
+    lw已绑定气缸 := 3;
+    FOR i := 0 TO 1 DO
+        st配置.aw气缸配置[i, 0] := 0;
+        st配置.aw气缸配置[i, 1] := UINT_TO_WORD(i);
+        st配置.aw气缸配置[i, 2] := WORD#16#FFFF;
+        st配置.aw气缸配置[i, 3] := UINT_TO_WORD(1 - i);
+        st配置.aw气缸配置[i, 4] := WORD#16#FFFF;
+        st配置.aw气缸配置[i, 5] := 10;
+        st配置.aw气缸配置[i, 6] := 100;
+        st配置.aw气缸配置[i, 7] := 10;
+    END_FOR;
+    IF NOT 气缸_配置有效(缸号 := 0, Store := st配置) THEN w失败 := 19; END_IF;
+    st配置.aw气缸配置[1, 1] := 0;
+    IF 气缸_配置有效(缸号 := 0, Store := st配置) THEN w失败 := 20; END_IF;
+    st配置.aw气缸配置[1, 1] := 1;
+    st配置.aw气缸配置[1, 3] := 1;
+    IF 气缸_配置有效(缸号 := 0, Store := st配置) THEN w失败 := 21; END_IF;
+    lw已绑定气缸 := lw原绑定;
+    ui阶段 := 24;
+24:
+    (* 隔离工程中检查真实调度器：手动待复位仍可受理且不被同扫描取消。
+       自测不调用物理输出映射，正式工程不得挂此程序。 *)
+    lw原绑定 := lw已绑定气缸;
+    lw已绑定气缸 := 1;
+    FOR i := 0 TO 7 DO
+        全局变量_保持区.Store.aw气缸配置[0, i] := st配置.aw气缸配置[0, i];
+    END_FOR;
+    ab气缸映射有效[0] := TRUE;
+    ab气缸模块就绪[0] := TRUE;
+    ab气缸动点传感器[0] := FALSE;
+    ab气缸原点传感器[0] := FALSE;
+    st运行时.b手动 := TRUE;
+    st运行时.bHMI在线 := TRUE;
+    st运行时.b待复位 := TRUE;
+    全局变量_气缸请求.ast请求[0].b自动 := FALSE;
+    全局变量_气缸请求.ast请求[0].b待下发 := TRUE;
+    全局变量_气缸请求.ast请求[0].b忙 := TRUE;
+    全局变量_气缸请求.ast请求[0].udi请求号 := 1;
+    全局变量_气缸请求.ast请求[0].w命令 := 40;
+    fb调度(StopAll := FALSE, Runtime := st运行时);
+    IF NOT ab气缸动点输出[0] OR NOT st运行时.ast气缸[0].b运动中
+        OR NOT 全局变量_气缸请求.ast请求[0].b忙 THEN w失败 := 22; END_IF;
+    (* 同样待复位条件下自动请求被撤销，不能沿用手动的输出完成资格。 *)
+    st运行时.b手动 := FALSE;
+    st运行时.b运行 := TRUE;
+    全局变量_气缸请求.ast请求[0].b自动 := TRUE;
+    全局变量_气缸请求.ast请求[0].b待下发 := TRUE;
+    全局变量_气缸请求.ast请求[0].udi请求号 := 2;
+    fb调度(StopAll := FALSE, Runtime := st运行时);
+    IF st运行时.ast气缸[0].b运动中 OR 全局变量_气缸请求.ast请求[0].b忙 THEN w失败 := 23; END_IF;
+    lw已绑定气缸 := lw原绑定;
     b完成 := TRUE;
 END_CASE;
 END_PROGRAM

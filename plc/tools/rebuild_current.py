@@ -18,6 +18,11 @@ import hashlib
 import traceback
 import uuid
 import shutil
+import sys
+from datetime import datetime
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from motion_task import configure_motion_task
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 try:
@@ -137,7 +142,7 @@ def main(api):
                     items.append(item)
         result['stage'] = 'open'
         # Open a filesystem copy: the vendor original cannot be saved accidentally.
-        shutil.copy2(os.path.join(ROOT, 'plc', 'project', 'FM_XJV1.project'), output_path)
+        shutil.copy2(os.path.join(ROOT, 'plc', 'project', 'FM_XJV1_Cylinder_v13.project'), output_path)
         project = api.projects.open(output_path, primary=True)
         app = project.active_application
         if app is None:
@@ -146,6 +151,17 @@ def main(api):
         result['stage'] = 'update'
         for item in items:
             emit(update_object(app, item, api))
+        result['stage'] = 'configure_task'
+        wrappers = [obj for obj in app.find('PLC_PRG', True)
+                    if hasattr(obj, 'textual_implementation')]
+        emit('PLC_PRG textual wrappers: ' + text_type(len(wrappers)))
+        if len(wrappers) != 1:
+            raise RuntimeError('Expected exactly one PLC_PRG entry wrapper')
+        wrappers[0].textual_declaration.replace('PROGRAM PLC_PRG\nVAR\nEND_VAR')
+        wrappers[0].textual_implementation.replace(u'程序_主循环();')
+        configure_motion_task(project, emit)
+        result['entry_program'] = u'PLC_PRG -> 程序_主循环'
+        result['motion_task'] = 'EtherCAT_Task'
         result['stage'] = 'rebuild'
         app.rebuild()
         check_messages(api.system, api.Severity, emit, 'REBUILD')
@@ -160,6 +176,9 @@ def main(api):
         project.save()
         project.close()
         project = None
+        with open(output_path, 'rb') as stream:
+            result['project_sha256'] = hashlib.sha256(stream.read()).hexdigest()
+        result['completed_at'] = datetime.utcnow().isoformat() + 'Z'
         result['stage'] = 'complete'
         result['success'] = True
         exitcode = 0

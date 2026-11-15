@@ -31,8 +31,15 @@ IF (Store.aw气缸配置[缸号, 3] <> WORD#16#FFFF)
    防止两个缸抢同一个阀或同一个端位传感器。 *)
 FOR i := 0 TO 53 DO
     IF (i <> 缸号) AND ((lw已绑定气缸 AND SHL(LWORD#1, i)) <> 0) THEN
-        FOR j := 1 TO 4 DO
-            FOR k := 1 TO 4 DO
+        (* DI与DO是独立地址空间：仅在同类映像内查重。 *)
+        FOR j := 1 TO 2 DO
+            FOR k := 1 TO 2 DO
+                IF (Store.aw气缸配置[缸号, j] <> WORD#16#FFFF)
+                    AND (Store.aw气缸配置[缸号, j] = Store.aw气缸配置[i, k]) THEN RETURN; END_IF;
+            END_FOR;
+        END_FOR;
+        FOR j := 3 TO 4 DO
+            FOR k := 3 TO 4 DO
                 IF (Store.aw气缸配置[缸号, j] <> WORD#16#FFFF)
                     AND (Store.aw气缸配置[缸号, j] = Store.aw气缸配置[i, k]) THEN RETURN; END_IF;
             END_FOR;

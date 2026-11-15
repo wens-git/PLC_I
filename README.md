@@ -1,6 +1,14 @@
-﻿# PySide6 + Web + PLC 当前交付
+# PySide6 + Web + PLC 当前交付
 
-## 2026-11-14 安全修正（同一1.3协议）
+## 本次交付状态与重建规则
+
+本轮 P1 控制链修复与安全状态以当前源码及本轮 evidence 为准：清故障不自动使能，故障清除后仍须用户显式请求使能。详细结果见 [本轮修复报告](docs/修复结果-20261115.md)。PLC 编译、桌面模拟与真实设备验收分别记录，不能互相替代。
+
+本源码仓库允许保留历史 PLC 基线；正式工程由新生成的 MANIFEST.json 的 `production_project.path` 唯一指定，不能通过统计整个目录的 `.project` 数量判断。下文日期记录为历史说明，不是当前源码的编译、打包或实机验收结论。仓库中的旧 MANIFEST 格式 1 也不是当前交付证明，必须重新生成格式 2。
+
+Windows 运行包必须同时具有 `App/FM_GPTPRO.exe` 和完整的 `App/_internal`。源码检出没有 App 时，启动脚本会说明缺包并返回失败；按“源码开发和重建”执行完整构建后才可启动。构建会部署 App，保留前一包在 `artifacts/desktop-deploy-previous`。源码开发工具、IDE 和现场设备均不能由历史验收记录替代。
+
+## 历史记录：2026-11-14 安全修正（同一1.3协议）
 
 在1.3基础上修正了控制链路的实际缺陷，协议字段不变：
 
@@ -31,8 +39,8 @@
 
 - App：本次构建的唯一 Windows 上位机运行包。
 - backend、desktop、web、tools：可重建的 Python、PySide6、Vue 源码、测试与构建脚本。
-- plc/project/FM_XJV1.project：唯一 PLC 交付工程，内容选自最新 AxisFix v11；只统一交付文件名。
-- plc/src：当前 34 个 ST 文件、35 个 IEC 对象。
+- plc/project：可含历史基线；正式主工程以 MANIFEST.json 的 `production_project.path` 为准，不能把基线下载为当前版本。
+- plc/src：当前 PLC 源码；清单逐文件记录哈希，不沿用历史源码数量。
 - plc/tests：当前 IEC 自测源码，不含可误下载的自测工程。
 - plc/tools/rebuild_current.py：在 XS Studio 内对当前工程另存副本并更新源码，不依赖旧工程模板，不登录或下载。
 - plc/evidence：最近一次对应源码的编译、隔离自测及任务核对记录。
@@ -63,7 +71,20 @@ Qt 界面线程不等待 PLC ACK。普通操作与停止/续租使用不同执�
     python -m pip install -r requirements-dev.txt
     powershell -NoProfile -ExecutionPolicy Bypass -File tools/BuildDesktop.ps1
 
-生成 artifacts/desktop-release/FM_GPTPRO/FM_GPTPRO.exe。前端资源已放入 web/dist，直接启动源码可执行 start-desktop.bat。只修改 Vue 源码后，需在 web 下 npm ci、npm run build 才会更新桌面加载的页面。
+构建先执行协议/Python/前端检查，再打包到 `artifacts/desktop-release/FM_GPTPRO`，完整复制并部署到 `App`，生成 `artifacts/desktop-build-evidence.json`。失败时脚本抛错，不生成成功凭据；打包中源码改变也会拒绝成功凭据。运行中的 App 可能阻止目录替换，应先关闭它。此脚本不会生成 MANIFEST，也不会执行打包 EXE 的窗口模拟检查。直接启动源码可执行 start-desktop.bat；修改 Vue 后需重新构建资源和运行包。
+
+完成本轮构建及计划内验证后，由交付负责人生成清单（例中的工程路径须与本轮真实工程一致）：
+
+    python tools/generate_manifest.py --production-project plc/project/FM_XJV1_Cylinder_v13.project --desktop-evidence artifacts/desktop-build-evidence.json --plc-evidence plc/evidence/review-fix-build-status.json
+    python tools/verify_delivery.py --require-builds
+
+未执行 PLC 编译时省略 `--plc-evidence`，其状态保持 `not_run`；普通 `verify_delivery.py` 验证文件完整性并打印未跑项，`--require-builds` 则要求当前 PLC 与桌面构建证据都通过。两者都不声称现场验收成功。EXE 缺失、主工程缺失、哈希不符、漏列文件或证据与当前源码不符均返回非零。
+
+格式 2 不读取旧 MANIFEST 的验收字段。它排除 artifacts（显式引用证据除外）、缓存、运行日志、用户 `*-data`、IDE `.opt` 等可变文件，并逐项登记源码、App、主工程和证据。历史基线可纳入完整性清单，但不会被指定为第二个正式工程。
+
+构建证据 JSON 必须具有 `success: true`、带时区的 `completed_at`、完整 `sources` 路径到 SHA-256 映射。PLC 证据还须有 `production_project`（交付相对路径）与 `project_sha256`；桌面证据须有 `executable_sha256`。PLC 的 `sources` 必须覆盖本轮全部 `plc/src/**/*.st`，桌面映射由 `tools/generate_manifest.py` 的 `source_hashes(root, 'desktop')` 生成。证据时间不得晚于清单，证据哈希和全部源码哈希都必须匹配；历史无时间/无主工程哈希的记录不能冒充本次编译。
+
+独立验证结果可通过 `--verification 本轮结果.json` 传入，键为 `python_tests`、`frontend_tests`、`protocol_check`、`source_smoke`、`packaged_smoke`、`real_plc_acceptance`；每项为 `{"status":"passed","evidence":"相对报告路径"}` 或 `{"status":"not_run"}`。已跑报告同样须具有上述时间、success 和当前桌面 sources；打包窗口报告还须绑定 EXE 哈希。没有显式提供的项目一律 `not_run`，构建凭据的步骤记录不自动变成窗口或现场验收通过。
 
 独立检查：
 
@@ -79,7 +100,7 @@ Qt 实际窗口与 QWebChannel 集成检查（仅模拟，自动退出）：
 
 --smoke-report 是验证模式，会在隔离数据目录连接模拟器并执行模拟操作；请始终配合 --data-dir 使用。
 
-## PLC 当前状态
+## 历史 PLC 状态（原始交付，不代表本轮）
 
 配套工程是 AxisFix v11，使用 XS Studio V2.3.2a；本轮复制其原始字节，没有修改 PLC 控制逻辑。官方 CODESYS ModbusTCP Slave，端口 1502，Holding 32 WORD、Input 1830 WORD，签名 0x584A5632。唯一 PLC_PRG 调用位于 4ms EtherCAT_Task，所选总线周期对齐该任务。精确地址来自 protocol-v1.json。
 
@@ -93,4 +114,4 @@ Qt 实际窗口与 QWebChannel 集成检查（仅模拟，自动退出）：
 
 ## 分发组件
 
-运行包使用 PySide6 6.11.1 与 Qt WebEngine，包含 Python、Qt 和其他依赖。请保留随包提供的许可与第三方说明；对外分发前按实际使用模块和 LGPL/GPL/第三方许可要求处理。Qt 动态库按目录发布，不做单文件内嵌。浏览器开发入口仅作源码开发入口保留，旧发布程序和历史 PLC 工程不进入交付。
+运行包使用 PySide6 6.11.1 与 Qt WebEngine，包含 Python、Qt 和其他依赖。请保留随包提供的许可与第三方说明；对外分发前按实际使用模块和 LGPL/GPL/第三方许可要求处理。Qt 动态库按目录发布，不做单文件内嵌。浏览器开发入口仅作源码开发入口保留。历史 PLC 基线可保留在源码仓库，正式下载目标始终以清单的 production_project 为准。

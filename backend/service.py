@@ -86,7 +86,7 @@ class Host:
             if self.worker:
                 return self.names.merge(self.profile, self.worker.state())
             return self.names.merge(self.profile, {
-                "connected": False, "handshake": False, "mode": "offline", "session": "",
+                "connected": False, "handshake": False, "mode": "offline", "session": "", "lifecycle": "disconnected",
                 "error": "未连接", "axes": [], "cylinders": [], "events": [], "alarms": [],
                 "io": {"x": [], "y": []}, "config_epoch": 0, "global_permit": 0})
 
@@ -160,7 +160,7 @@ class HmiService:
             self.interactive = False
         self.host.disconnect()
 
-    def dispatch(self, method, path, payload, interaction_epoch=None):
+    def dispatch(self, method, path, payload, interaction_epoch=None, jog_deadline=None):
         if self.closed:
             raise HTTPException(409, "应用正在关闭")
         if not isinstance(payload, dict):
@@ -191,7 +191,7 @@ class HmiService:
             raise HTTPException(404, "接口未开放")
         model, handler = route
         if path == '/api/jog/start':
-            return self.jog_start(model.model_validate(payload), interaction_epoch)
+            return self.jog_start(model.model_validate(payload), interaction_epoch, jog_deadline)
         if path == '/api/jog/renew':
             return self.jog_renew(model.model_validate(payload), interaction_epoch)
         return handler(model.model_validate(payload))
@@ -287,12 +287,12 @@ class HmiService:
         worker = self.host.current(body.session)
         return self.wait(worker.command(31, 1, body.axis, a=body.point, b=scaled(body.position), c=scaled(body.speed), session=body.session))
 
-    def jog_start(self, body: JogStart, interaction_epoch=None):
+    def jog_start(self, body: JogStart, interaction_epoch=None, deadline=None):
         worker = self.host.current(body.session)
         with self.interaction_lock:
             if not self.interactive or interaction_epoch is not None and interaction_epoch != self.interaction_epoch:
                 raise HTTPException(409, "窗口已失焦，请重新按下点动")
-            future = worker.begin_jog(body.axis, body.direction, body.token, session=body.session)
+            future = worker.begin_jog(body.axis, body.direction, body.token, session=body.session, deadline=deadline)
         return self.wait(future)
 
     def jog_renew(self, body: JogToken, interaction_epoch=None):
