@@ -67,7 +67,7 @@
   }, 
   "entry_program": "PLC_PRG -> \u7a0b\u5e8f_\u4e3b\u5faa\u73af", 
   "success": true, 
-  "completed_at": "2026-11-16T03:34:27.614000Z", 
+  "completed_at": "2026-11-16T14:15:12.063000Z", 
   "offline_only": true, 
   "domains": [
     "application", 
@@ -106,6 +106,6 @@
       "device": "ModbusTCP_Slave_XJV1"
     }
   ], 
-  "project_sha256": "564cf2a9a9b2387168cbd1932145496a1bdc7f3ee3e76f14211df3bbd340d618", 
+  "project_sha256": "bf5a0d6b9add6ddc438a8be0a3e8907852984ce98216bd63d98cbfc364c6ace1", 
   "task_owner": "EtherCAT_Task"
 }

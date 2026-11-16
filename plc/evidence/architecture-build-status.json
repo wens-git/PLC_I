@@ -1,4 +1,9 @@
 {
+  "removed_stale_objects": [
+    "Axis_Busy",
+    "Axis_Done",
+    "Axis_Error"
+  ],
   "sources": {
     "plc\\src\\motion\\功能块_轴请求监视.st": "ee717fbd8465c56616c0ed99375a1ffef79b5a9f8397e63981eed56c8da66f31",
     "plc\\src\\cylinder\\Cy阀型.st": "b5f5270b3b82591198ff535fb9207106f9c9425e73d69ea586ae91cf647fdeff",
@@ -68,16 +73,29 @@
   "entry_program": "PLC_PRG -> 程序_主循环",
   "motion_task": "EtherCAT_Task",
   "success": true,
-  "completed_at": "2026-11-16T03:33:31.034000Z",
+  "completed_at": "2026-11-16T14:14:40.901000Z",
   "offline_only": true,
-  "project_sha256": "564cf2a9a9b2387168cbd1932145496a1bdc7f3ee3e76f14211df3bbd340d618",
+  "project_sha256": "bf5a0d6b9add6ddc438a8be0a3e8907852984ce98216bd63d98cbfc364c6ace1",
   "stage": "complete",
-  "output_project": "C:\\Users\\Admin\\Downloads\\PLC_I-main\\PLC_I-main\\artifacts\\plc-probe\\architecture-build-10\\FM_XJV1_rebuilt.project",
+  "output_project": "C:\\Users\\Admin\\Downloads\\PLC_I-main (1)\\PLC_I-main\\artifacts\\plc-probe\\clean-build-1\\FM_XJV1_rebuilt.project",
   "production_project": "plc/project/FM_XJV1_Cylinder_v13.project",
   "rebuild_errors": 0,
   "rebuild_warnings": 0,
   "code_generation_errors": 0,
   "code_generation_warnings": 0,
   "real_plc_connected": false,
-  "downloaded_to_plc": false
+  "downloaded_to_plc": false,
+  "legacy_objects_removed": [
+    "Axis_Busy",
+    "Axis_Done",
+    "Axis_Error"
+  ],
+  "legacy_folders_removed": [
+    "01_类型",
+    "02_全局变量",
+    "03_功能块",
+    "04_函数",
+    "05_程序",
+    "XJV1"
+  ]
 }

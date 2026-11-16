@@ -1,10 +1,10 @@
 {
   "format": 2,
-  "generated_at": "2026-11-16T14:11:00.928617+00:00",
+  "generated_at": "2026-11-16T14:15:22.012076+00:00",
   "product": "FM_GPTPRO PySide6 + Web + QWebChannel",
   "production_project": {
     "path": "plc/project/FM_XJV1_Cylinder_v13.project",
-    "sha256": "564cf2a9a9b2387168cbd1932145496a1bdc7f3ee3e76f14211df3bbd340d618"
+    "sha256": "bf5a0d6b9add6ddc438a8be0a3e8907852984ce98216bd63d98cbfc364c6ace1"
   },
   "plc_sources": {
     "plc/src/application/全局变量_错误码.gvl.st": "436257e668f900e0c4e5b1a0ec1ee75f7d3295b0ec23d12abcfb1c4dc2ae3dd8",
@@ -160,7 +160,7 @@
     "status": "passed",
     "evidence": {
       "path": "plc/evidence/architecture-build-status.json",
-      "sha256": "e24f977d4e5c210e8b407bbd64af2b906cff723fb7af2a900bfad0070cda7786"
+      "sha256": "ebb8419857639a336d57c0bae61ae145dab606044194f7b9441e81a12a0200f7"
     }
   },
   "desktop_build": {
@@ -3342,9 +3342,9 @@
     "docs/架构审查与整合规划.md": "0259a3e41650670378f9c61c267415ab6629704b2418b389c60d26caf2c267df",
     "docs/气缸配置与业务接口.md": "f2673acea333a3de67fa1027e8841f9d14797f8965297f8ed68660d5359e4f0a",
     "plc/README.md": "fb00a9c0d2b8192f93a21328480fca41a4ff4858cb80488f4d93e35fa4239ed5",
-    "plc/evidence/architecture-build-status.json": "e24f977d4e5c210e8b407bbd64af2b906cff723fb7af2a900bfad0070cda7786",
-    "plc/evidence/architecture-build.txt": "354836423995734d54905f18fcca7deeb80fb0b88cc6693ac71cbe62f1363994",
-    "plc/evidence/architecture-project-verification.json": "35852f79ab75432ee8fe57395749429077417af1284f11b2bed337750244acd4",
+    "plc/evidence/architecture-build-status.json": "ebb8419857639a336d57c0bae61ae145dab606044194f7b9441e81a12a0200f7",
+    "plc/evidence/architecture-build.txt": "d718a42f13582e1b6957f76c7a82473481dcb3d9480a2d078ebeb9460bff18cb",
+    "plc/evidence/architecture-project-verification.json": "548217663e9c9766aaa2826594312f713881e59cf824f6ab56125f97f2f6c0cb",
     "plc/evidence/axis-alarm-selftest.txt": "b72e032741f37431d9764f658f5bdf0beb3132aa3347824a53e81e04a5fa5e0f",
     "plc/evidence/axis-delivery-verify.txt": "081578dff2f82e69f7388a2c314eee8d33f7fe165f794611edf04685553ed121",
     "plc/evidence/build-status.json": "7805750b1047aba728955298f293e54c5319857dd720cca59569a1a7f637da3c",
@@ -3361,7 +3361,7 @@
     "plc/evidence/safety-fix-build.txt": "5114e01664216aa2cfc94b495ba4ed00c46c13a5a2d541a26d44c95abed88878",
     "plc/evidence/selftest-20261030-000816.txt": "8f54d5ee476a48ea073da3f4c96ccfb5c463a88725794387ebcefa1207313ede",
     "plc/project/FM_XJV1.project": "3e35d4df66509fde3b418c0904e1202ed8b77884909f14f2bd87174f0d4a7240",
-    "plc/project/FM_XJV1_Cylinder_v13.project": "564cf2a9a9b2387168cbd1932145496a1bdc7f3ee3e76f14211df3bbd340d618",
+    "plc/project/FM_XJV1_Cylinder_v13.project": "bf5a0d6b9add6ddc438a8be0a3e8907852984ce98216bd63d98cbfc364c6ace1",
     "plc/src/application/全局变量_错误码.gvl.st": "436257e668f900e0c4e5b1a0ec1ee75f7d3295b0ec23d12abcfb1c4dc2ae3dd8",
     "plc/src/application/函数_动作许可.st": "f194c05395c7e705f4f5594440d5d319d8edf01d808209e1f3189da818e4c1e8",
     "plc/src/application/功能块_暂停恢复.st": "4d2a9d962287ada5b5f4294053cab18168d8b20376ea06684560c0a8ea16dafe",
@@ -3433,9 +3433,10 @@
     "plc/tests/程序_轴接口自测.st": "3334a5bf6cb7a3e665943d8be79b7c688c061d7d513cab44bcb3771e3a88546b",
     "plc/tests/程序_运行时自测.st": "c20cfd462be0ca49c9f0fa7e8c937fc810eca561d6c6bd22f58cd434af2f766c",
     "plc/tools/REBUILD.md": "b3965fb2050dd8b2bcecc8952c2e050d71a23c65da3059e8e3a6f55249c31126",
+    "plc/tools/dump_tree.py": "b604fd7fdaae8b3f8993c64f9c06ae2feb923aa1277ee28d90771185ee5fd18e",
     "plc/tools/motion_task.py": "3ac1a02534dab7ae50ba3253170418666aed23f4afa0ee945f8914fb8d6cf95f",
-    "plc/tools/rebuild_current.py": "ce50f2fd73c12c82b6b359d8634052bc5f2f2e9e7e643e6257560cc8e40b36c9",
-    "plc/tools/verify_project.py": "8ef2e70597c2ef4275a20e112e29c7bee6373528f9ed405253d15fb4eebd5b86",
+    "plc/tools/rebuild_current.py": "5ebe8962b15c8a175791024e82ad1d8f2ad684e592b30f0e3667710581ef58fc",
+    "plc/tools/verify_project.py": "96b879602de78b6073cea0f00ecf7cd2a49968af25012da6ce9854c944b4d74c",
     "tools/BuildDesktop.ps1": "2754bebf8197fcf4c5eea4888be695d5927ab8e2a165ffb3d86cfaa644238029",
     "tools/StartupHelp.ps1": "acd11e80f682ec5c30c0870a0d1deedcb2ece68a40449dd13a4328ee3677d321",
     "tools/archive_delivery.py": "619aa75bb5a8d45cdacc9e56ba98b5e50da872d4c65adf6ba4712b71da412433",

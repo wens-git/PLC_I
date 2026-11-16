@@ -16,6 +16,7 @@ try:
     count = 0
     sources = {}
     domains = set()
+    expected_names = set()
     for folder, dirs, files in os.walk(os.path.join(ROOT, 'plc', 'src')):
         for filename in files:
             if not filename.endswith('.st'): continue
@@ -33,8 +34,20 @@ try:
                 if norm(obj.textual_declaration.text) != norm(decl): raise RuntimeError('Declaration differs ' + name)
                 if impl is not None and norm(obj.textual_implementation.text) != norm(impl): raise RuntimeError('Implementation differs ' + name)
                 if obj.parent.get_name() != 'SRC_' + domain: raise RuntimeError('Wrong source domain ' + name)
+                expected_names.add(name.lower())
                 count += 1
     if app.find(u'结构体_气缸工程', True): raise RuntimeError('Retired type remains')
+    # The delivered application must contain exactly the tracked sources plus the
+    # scheduled PLC_PRG wrapper and the persistent variable list. Any other object
+    # is a vendor leftover and must fail verification rather than ship silently.
+    keep = {u'plc_prg', u'persistentvars'}
+    expected_lower = expected_names | keep
+    unexpected = sorted({o.get_name() for o in app.get_children(True)
+                         if hasattr(o, 'textual_declaration')
+                         and o.get_name().lower() not in expected_lower | keep})
+    if unexpected: raise RuntimeError('Unexpected project objects: ' + ', '.join(unexpected))
+    for legacy in (u'01_类型', u'02_全局变量', u'03_功能块', u'04_函数', u'05_程序', u'XJV1'):
+        if app.find(legacy, True): raise RuntimeError('Legacy folder remains: ' + legacy)
     wrapper = [o for o in app.find('PLC_PRG', True) if hasattr(o, 'textual_implementation')]
     if len(wrapper) != 1 or wrapper[0].textual_implementation.text.strip() != u'程序_主循环();': raise RuntimeError('Wrong wrapper')
     objects = list(project.get_children(True))

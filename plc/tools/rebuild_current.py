@@ -157,6 +157,27 @@ def main(api):
                     emit('REMOVED ' + retired)
         for item in items:
             emit(update_object(app, item, api))
+        # The delivered project must equal the source tree: no vendor leftovers.
+        # PLC_PRG is the scheduled entry wrapper; PersistentVars is the retained
+        # variable list imported from 全局变量_保持区 and is required by the device.
+        keep = {u'plc_prg', u'persistentvars'}
+        expected = {name.lower() for name in names}
+        stale = sorted({obj.get_name() for obj in app.get_children(True)
+                        if hasattr(obj, 'textual_declaration')
+                        and obj.get_name().lower() not in expected | keep})
+        for name in stale:
+            for obj in app.find(name, True):
+                if hasattr(obj, 'textual_declaration'):
+                    obj.remove()
+                    emit('REMOVED STALE ' + name)
+        result['removed_stale_objects'] = stale
+        for folder_name in (u'01_类型', u'02_全局变量', u'03_功能块', u'04_函数', u'05_程序', u'XJV1'):
+            for folder in app.find(folder_name, True):
+                if hasattr(folder, 'textual_declaration'):
+                    continue
+                if not list(folder.get_children(False)):
+                    folder.remove()
+                    emit('REMOVED EMPTY FOLDER ' + folder_name)
         # Mirror source domains in the IDE instead of leaving a flat application.
         domain_objects = {}
         for relative in result['sources']:
