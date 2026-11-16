@@ -39,7 +39,7 @@ Windows 运行包必须同时具有 `App/FM_GPTPRO.exe` 和完整的 `App/_inter
 
 ## 2026-11-13 气缸/真空升级（协议1.3）
 
-当前源码新增中文气缸业务接口、统一手自动请求、两侧独立确认延时和真空模式；上位机同步显示传感器确认/延时完成。签名升级为0x584A5633，旧1.2运行包和PLC不能与新版本混用。使用说明见 [气缸配置与业务接口](docs/气缸配置与业务接口.md)。物理气缸仍全部未绑定，不推测现场接线。本次PLC工程为 [FM_XJV1_Cylinder_v13.project](plc/project/FM_XJV1_Cylinder_v13.project)，原FM_XJV1.project保留为1.2基线；新工程已离线编译及代码生成0错误0警告，47个源码hash对应本次记录。App已更新为1.3，原运行包备份在artifacts/App-before-cylinder-v13。本次构建与验证结果见 [气缸升级验证](Validation/cylinder-upgrade-results.json)；下文2026-11-09记录仅说明原始交付，不能用作本次改动的编译/实机证明。
+当前源码新增中文气缸业务接口、统一手自动请求、两侧独立确认延时和真空模式；上位机同步显示传感器确认/延时完成。签名升级为0x584A5633，旧1.2运行包和PLC不能与新版本混用。使用说明见 [气缸配置与业务接口](docs/气缸配置与业务接口.md)。物理气缸仍全部未绑定，不推测现场接线。本次PLC工程为 [FM_XJV1_Cylinder_v13.project](plc/project/FM_XJV1_Cylinder_v13.project)，仓库内只保留这一个正式工程（1.2 基线 `FM_XJV1.project` 已按要求删除，历史来源可由 Git 记录追溯）；新工程已离线编译及代码生成0错误0警告，47个源码hash对应本次记录。App已更新为1.3，原运行包备份在artifacts/App-before-cylinder-v13。本次构建与验证结果见 [气缸升级验证](Validation/cylinder-upgrade-results.json)；下文2026-11-09记录仅说明原始交付，不能用作本次改动的编译/实机证明。
 
 ## 原始交付记录（2026-11-09）
 

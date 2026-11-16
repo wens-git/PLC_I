@@ -14,7 +14,7 @@
 
 - App：本次构建的唯一 Windows 上位机运行包。
 - backend、desktop、web、tools：可重建的 Python、PySide6、Vue 源码、测试与构建脚本。
-- plc/project/FM_XJV1.project：唯一 PLC 交付工程，内容选自最新 AxisFix v11；只统一交付文件名。
+- plc/project/FM_XJV1_Cylinder_v13.project：唯一 PLC 交付工程（1.2 基线已删除，历史可由 Git 追溯）。
 - plc/src：当前 34 个 ST 文件、35 个 IEC 对象。
 - plc/tests：当前 IEC 自测源码，不含可误下载的自测工程。
 - plc/tools/rebuild_current.py：在 XS Studio 内对当前工程另存副本并更新源码，不依赖旧工程模板，不登录或下载。
