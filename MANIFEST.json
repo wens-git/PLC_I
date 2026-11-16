@@ -1,6 +1,6 @@
 {
   "format": 2,
-  "generated_at": "2026-11-16T14:06:36.030189+00:00",
+  "generated_at": "2026-11-16T14:11:00.928617+00:00",
   "product": "FM_GPTPRO PySide6 + Web + QWebChannel",
   "production_project": {
     "path": "plc/project/FM_XJV1_Cylinder_v13.project",
@@ -225,7 +225,7 @@
     "requirements-dev.txt": "efba51fe072e1f50a471693c726c9762741c3a28d5c68050863b7f0d2fa5e3fe",
     "requirements.txt": "7b847c9ddede3802a340df89cdc4542ea52f35f7a86b6158200137eed74a346d",
     "start-desktop.bat": "19f806065349948a788e1263bf67b9fe6d479de37836e1be418c4481f0d917ce",
-    "启动上位机.bat": "0de3440e86e56c507e62cd6333d6ff75c5d2a5ef29e0a8c611b46fa454800387",
+    "启动上位机.bat": "9409e2d0186ed9a08419514e5142fd716adc71f34af578495bc0a971448c1e1d",
     "App/FM_GPTPRO.exe": "2cd142db5f944aaed3e92f952fc8378855a484cbb6be280477854a3e7c2d5e37",
     "App/_internal/VCRUNTIME140.dll": "d1f4225df2cd877dbf130d5668a021dce3f94118455ff5ec952061c30afc9ce7",
     "App/_internal/VCRUNTIME140_1.dll": "a7146c08f89fe5b04541ab507cdb59ff7b44534d4ba3c668a426c6450a03434e",
@@ -3437,6 +3437,7 @@
     "plc/tools/rebuild_current.py": "ce50f2fd73c12c82b6b359d8634052bc5f2f2e9e7e643e6257560cc8e40b36c9",
     "plc/tools/verify_project.py": "8ef2e70597c2ef4275a20e112e29c7bee6373528f9ed405253d15fb4eebd5b86",
     "tools/BuildDesktop.ps1": "2754bebf8197fcf4c5eea4888be695d5927ab8e2a165ffb3d86cfaa644238029",
+    "tools/StartupHelp.ps1": "acd11e80f682ec5c30c0870a0d1deedcb2ece68a40449dd13a4328ee3677d321",
     "tools/archive_delivery.py": "619aa75bb5a8d45cdacc9e56ba98b5e50da872d4c65adf6ba4712b71da412433",
     "tools/check_protocol.py": "25af470259e74455a5b635bec2f2c37a9865b7af9af9ff47ee4fd6917619c468",
     "tools/generate_manifest.py": "cd9b46ec69c8f1e4d06af29049f6414beba3ccdd2dff034be21cdd90d9bc11fa",
