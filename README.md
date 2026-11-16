@@ -1,5 +1,17 @@
 # PySide6 + Web + PLC 当前交付
 
+## 从 GitHub 下载后打不开上位机？先看这里
+
+**本仓库是源码仓库，不含 Windows 运行包。** `.gitignore` 排除了 `App/`（约 3000 个文件、数百 MB 的 PySide6/Qt WebEngine 运行库），因此下载 ZIP 或 clone 得到的目录里没有 `App/FM_GPTPRO.exe`，双击 `启动上位机.bat` 只会提示“缺少运行包”并退出，这不是程序损坏。
+
+任选一种方式运行（详见后文“启动”与“源码开发和重建”）：
+
+| 方式 | 做法 | 适用场景 |
+|---|---|---|
+| 完整发布包（推荐） | 解压 `PLC_I-architecture-*.zip`，双击其中的 `启动上位机.bat` | 只想使用界面，不装开发环境 |
+| 源码直接运行 | 双击 `start-desktop.bat`（需 Python 3.14 与 `requirements-dev.txt` 依赖） | 已装 Python，改代码调试 |
+| 本机打包 | `powershell -NoProfile -ExecutionPolicy Bypass -File tools\BuildDesktop.ps1` | 需要分发给其他机器 |
+
 ## PLC 架构重构与归档
 
 PLC 已按职责整理为七个域，服务端与主循环职责拆分，Axis/Cy请求提交合并；说明见 [PLC架构](docs/PLC架构.md)。本轮生产工程及证据以格式2清单为准。完整交付包由 `python tools/archive_delivery.py --output artifacts/releases/PLC_I-architecture.zip` 生成，并附SHA256；Git仓库保留源码、正式工程和验证证据，桌面大体积运行库在本地完整归档中。
