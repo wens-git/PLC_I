@@ -1,6 +1,6 @@
 {
   "format": 2,
-  "generated_at": "2026-11-16T14:15:22.012076+00:00",
+  "generated_at": "2026-11-16T14:32:17.371200+00:00",
   "product": "FM_GPTPRO PySide6 + Web + QWebChannel",
   "production_project": {
     "path": "plc/project/FM_XJV1_Cylinder_v13.project",
@@ -3330,7 +3330,7 @@
     "desktop/smoke.py": "969df220b36c9e9d5c0e1a0f5f2800327e1c4f723a126c2d046d8027c92a4816",
     "desktop/window.py": "36763c30a5afb025be3c5fe3d2838da888ad9e2358cefeef28e1ba2ac1c28b3c",
     "docs/DesktopDelivery.md": "50ad98dcd79ccb7f50544814545ea9fb405983e8edc3aeec908fbbfae4edf20f",
-    "docs/PLC架构.md": "22b93950488391d373cec89a47be11b9d97214293ae6a84addbf636a84ce89f4",
+    "docs/PLC架构.md": "c3c5b3e817306ab4695be4749c97ffaba7931bfca35a7e874cb6df300cf84e75",
     "docs/cylinder-upgrade-contract.md": "705ce2426559958cd942b7823aec83275fa470c4931ae7c20f1e437f48cf89d5",
     "docs/protocol-v1.json": "257c1d8b85dcb55827e68076110d04c8ffc31af52404a5a9a0bc78c42e307031",
     "docs/register-map.md": "f74b2329e60f92444f4e81c10a19e087084954425cc4d66c80948e0b39ef3043",
@@ -3433,7 +3433,6 @@
     "plc/tests/程序_轴接口自测.st": "3334a5bf6cb7a3e665943d8be79b7c688c061d7d513cab44bcb3771e3a88546b",
     "plc/tests/程序_运行时自测.st": "c20cfd462be0ca49c9f0fa7e8c937fc810eca561d6c6bd22f58cd434af2f766c",
     "plc/tools/REBUILD.md": "b3965fb2050dd8b2bcecc8952c2e050d71a23c65da3059e8e3a6f55249c31126",
-    "plc/tools/dump_tree.py": "b604fd7fdaae8b3f8993c64f9c06ae2feb923aa1277ee28d90771185ee5fd18e",
     "plc/tools/motion_task.py": "3ac1a02534dab7ae50ba3253170418666aed23f4afa0ee945f8914fb8d6cf95f",
     "plc/tools/rebuild_current.py": "5ebe8962b15c8a175791024e82ad1d8f2ad684e592b30f0e3667710581ef58fc",
     "plc/tools/verify_project.py": "96b879602de78b6073cea0f00ecf7cd2a49968af25012da6ce9854c944b4d74c",
