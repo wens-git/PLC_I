@@ -18,6 +18,8 @@ Do **not** add `--noUI` on this installation. The vendor `DeviceConfigurationEdi
 
 The tool opens a filesystem copy of `plc/project/FM_XJV1_Cylinder_v13.project`, loads all `plc/src/**/*.st`, creates missing GVL/DUT/POU objects, explicitly sets the sole `PLC_PRG` wrapper to call `程序_主循环`, verifies the single `EtherCAT_Task` owner and bus-cycle bindings, rebuilds, checks typed Error/FatalError messages in active message categories, generates code and checks again. Only then does it save and mark success. Duplicate names or source changes during the build cause failure. Warning messages remain in the log and do not count as errors. The full device tree, library references and existing mappings remain those of the original project.
 
+The source domains are mirrored into `SRC_*` folders in the IDE; retired types are removed explicitly. Object movement selects the installed ScriptEngine interface overload to avoid IronPython ambiguity. Run `verify_project.py` through the same XS command after publishing to reopen the production project and compare every declaration/implementation, domain folder and task owner.
+
 Each build has `rebuild-current.txt`, `build-status.json`, and a project copy. A project file's mere presence does not mean a successful build: require process exit 0 **and** `build-status.json` with `success: true`, `stage: complete`, and matching current source hashes. On failure the project copy is diagnostic only; no historical evidence is overwritten.
 
 Host-side regression tests:

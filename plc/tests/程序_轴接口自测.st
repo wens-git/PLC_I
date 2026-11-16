@@ -44,6 +44,11 @@ CASE Step OF
         Ok := Result AND Axis状态(0).b忙 AND NOT Axis状态(0).b完成;
         Result := Axis_Home(0);
         Ok := Ok AND NOT Result;
+        (* 忙槽优先：无效新槽也不能改写已接受请求或其状态。 *)
+        Result := Axis_MoveToPoint(0, 120);
+        Ok := Ok AND NOT Result AND (全局变量_轴请求.ast请求[0].ui槽号 = 16)
+            AND (全局变量_轴请求.ast请求[0].w命令 = 29)
+            AND (全局变量_轴请求.ast请求[0].w错误 = 0);
     2:
         (* Free slot must reject through the real shared dispatch path. *)
         Command[2] := Command[2] + 1;
@@ -86,7 +91,11 @@ CASE Step OF
         Result := Axis_MoveToPoint(0, 16);
         Ok := Result AND NOT Axis状态(0).b完成;
         Result := Axis_Stop(0);
-        Ok := Ok AND Result AND NOT Axis状态(0).b完成 AND Axis状态(0).b错误;
+        Ok := Ok AND Result AND NOT Axis状态(0).b完成 AND Axis状态(0).b错误
+            AND (全局变量_轴请求.ast请求[0].w错误 = 19)
+            AND (全局变量_轴请求.ast请求[0].w命令 = 26)
+            AND NOT 全局变量_轴请求.ast请求[0].b已下发
+            AND NOT 全局变量_轴请求.ast请求[0].b已接收;
     8:
         Command[2] := Command[2] + 1;
         Server(Command := Command, Published := Published, Runtime := Runtime);

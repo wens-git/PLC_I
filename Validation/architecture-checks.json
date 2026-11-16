@@ -1,0 +1,25 @@
+{
+  "python_tests": {
+    "status": "passed",
+    "evidence": "Validation/architecture-python.json"
+  },
+  "frontend_tests": {
+    "status": "passed",
+    "evidence": "Validation/architecture-frontend.json"
+  },
+  "protocol_check": {
+    "status": "passed",
+    "evidence": "Validation/architecture-protocol.json"
+  },
+  "source_smoke": {
+    "status": "passed",
+    "evidence": "Validation/architecture-source-smoke.json"
+  },
+  "packaged_smoke": {
+    "status": "passed",
+    "evidence": "Validation/architecture-packaged-smoke.json"
+  },
+  "real_plc_acceptance": {
+    "status": "not_run"
+  }
+}

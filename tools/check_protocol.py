@@ -114,7 +114,7 @@ def main():
     spec = json.loads((ROOT / "docs/protocol-v1.json").read_text(encoding="utf-8"))
     validate(spec)
     artifacts = {ROOT / "docs/register-map.md": render_markdown(spec),
-                 ROOT / "plc/src/02_gvl/全局变量_地址表.gvl.st": render_st(spec)}
+                 ROOT / "plc/src/communication/全局变量_地址表.gvl.st": render_st(spec)}
     for path, text in artifacts.items():
         if args.write:
             path.write_text(text, encoding="utf-8", newline="\n")

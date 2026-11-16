@@ -60,12 +60,15 @@ class RebuildTests(unittest.TestCase):
             (root_path / 'plc/project').mkdir(parents=True)
             (root_path / 'plc/src').mkdir()
             (root_path / 'plc/project/FM_XJV1_Cylinder_v13.project').write_bytes(b'original')
-            (root_path / 'plc/src/G.gvl.st').write_text('VAR_GLOBAL\nx:INT;\nEND_VAR')
+            (root_path / 'plc/src/configuration').mkdir()
+            (root_path / 'plc/src/configuration/G.gvl.st').write_text('VAR_GLOBAL\nx:INT;\nEND_VAR')
             called = []
             obj = types.SimpleNamespace(textual_declaration=types.SimpleNamespace(replace=lambda text: None),
-                                        textual_implementation=types.SimpleNamespace(replace=lambda text: called.append('wrapper')))
-            app = types.SimpleNamespace(find=lambda *args: [obj], rebuild=lambda: called.append('rebuild'),
-                                        generate_code=lambda: called.append('generate'))
+                                        textual_implementation=types.SimpleNamespace(replace=lambda text: called.append('wrapper')),
+                                        parent=types.SimpleNamespace(get_name=lambda: 'SRC_configuration'))
+            app = types.SimpleNamespace(find=lambda *args: [] if args[0] == '结构体_气缸工程' else [obj], rebuild=lambda: called.append('rebuild'),
+                                        generate_code=lambda: called.append('generate'),
+                                        get_children=lambda recursive: [types.SimpleNamespace(get_name=lambda: 'SRC_configuration')])
             project = types.SimpleNamespace(active_application=app, close=lambda: called.append('close'),
                                             save=lambda: called.append('save'))
             system = types.SimpleNamespace(get_message_categories=lambda active: ['compile'],

@@ -43,6 +43,6 @@ def test_reproduces_100ms_publication_starvation():
 
 @pytest.mark.parametrize('phase_ms', range(0, 300, 5))
 def test_delivered_publication_allows_coherent_reads_at_20ms_latency(phase_ms):
-    source = (Path(__file__).parents[2] / 'plc/src/03_pou/功能块_服务端.st').read_text(encoding='utf-8-sig')
+    source = (Path(__file__).parents[2] / 'plc/src/communication/功能块_状态发布.st').read_text(encoding='utf-8-sig')
     period = int(re.search(r'tmr发布[(]IN := NOT tmr发布.Q, PT := T#([0-9]+)ms[)]', source)[1])
     exercise(period, phase_ms)

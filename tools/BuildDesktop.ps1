@@ -13,7 +13,7 @@ try {
     if ($LASTEXITCODE) { throw 'Desktop input snapshot failed' }
     python tools/check_protocol.py
     if ($LASTEXITCODE) { throw 'Protocol check failed' }
-    python -m pytest backend/tests -q
+    python -m pytest backend/tests tools/tests -q
     if ($LASTEXITCODE) { throw 'Python checks failed' }
     Push-Location web
     try {

@@ -1,0 +1,15 @@
+{
+  "source_files": 64,
+  "baseline_code_lines": 2999,
+  "current_code_lines": 3152,
+  "main_lines_before": 168,
+  "main_lines_after": 35,
+  "server_lines_before": 614,
+  "server_lines_after": 323,
+  "config_lines_before": 288,
+  "config_lines_after": 274,
+  "generated_code_bytes": 1406676,
+  "global_data_bytes": 302253,
+  "generated_code_delta_bytes": 4122,
+  "global_data_delta_bytes": 1454
+}

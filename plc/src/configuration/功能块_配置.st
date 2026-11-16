@@ -110,12 +110,8 @@ IF w类别 = 2 THEN
     END_IF;
 ELSE
     IF w类别 = 3 THEN
-        IF Store.aw点位[i索引, 4] = XJV1_POINT_FREE THEN
-            i归属 := 16;
-        ELSE
-            i归属 := WORD_TO_INT(SHR(Store.aw点位[i索引, 4], 2) AND WORD#16#000F);
-            i轴号 := i归属;
-        END_IF;
+        i归属 := 函数_点位归属(Flags := Store.aw点位[i索引, 4]);
+        IF i归属 <> 16 THEN i轴号 := i归属; END_IF;
         IF i归属 = 16 THEN
             (* Free slot: only a code-50 claim passes here, mirroring permit. *)
             IF w命令码 <> 50 THEN Result := 4; RETURN; END_IF;
@@ -149,7 +145,6 @@ IF (w命令码 = 50) AND (w类别 = 1) THEN
     IF di负限位 >= di正限位 THEN Result := 21; RETURN; END_IF;
     FOR i循环 := 2 TO 6 DO
         dw值 := SHL(WORD_TO_DWORD(aw候选[i循环 * 2]), 16) OR WORD_TO_DWORD(aw候选[i循环 * 2 + 1]);
-        IF (dw值 = 0) OR (dw值 > DWORD#2147483647) THEN Result := 函数_参数码(INT_TO_UINT(i循环)); RETURN; END_IF;
         IF NOT 函数_额定值(AxisIndex := INT_TO_UINT(i轴号), Field := INT_TO_UINT(i循环),
             Value := DWORD_TO_UDINT(dw值)) THEN Result := 函数_参数码(INT_TO_UINT(i循环)); RETURN; END_IF;
     END_FOR;
@@ -188,11 +183,7 @@ ELSE
     (* Kind 3 point pool records; command 31 arrives as kind 1 (object axis). *)
     IF w命令码 = 31 THEN
         i点位索引 := WORD_TO_INT(Request[7] AND WORD#16#00FF);
-        IF Store.aw点位[i点位索引, 4] = XJV1_POINT_FREE THEN
-            i归属 := 16;
-        ELSE
-            i归属 := WORD_TO_INT(SHR(Store.aw点位[i点位索引, 4], 2) AND WORD#16#000F);
-        END_IF;
+        i归属 := 函数_点位归属(Flags := Store.aw点位[i点位索引, 4]);
         IF (i归属 <> i轴号) AND (i归属 <> 16) THEN Result := 18; RETURN; END_IF;
     ELSE
         i点位索引 := i索引;
@@ -231,11 +222,7 @@ ELSE
             aw候选[2] := Request[18]; aw候选[3] := Request[19];
         END_IF;
         IF (w掩码 AND WORD#16#0004) <> 0 THEN aw候选[4] := Request[20]; END_IF;
-        IF aw候选[4] = XJV1_POINT_FREE THEN
-            i新归属 := 16;
-        ELSE
-            i新归属 := WORD_TO_INT(SHR(aw候选[4], 2) AND WORD#16#000F);
-        END_IF;
+        i新归属 := 函数_点位归属(Flags := aw候选[4]);
         IF i归属 = 16 THEN
             IF i新归属 = 16 THEN Result := 9; RETURN; END_IF;
             IF (全局变量_绑定.w已绑定轴 AND SHL(WORD#1, i新归属)) = 0 THEN
@@ -258,7 +245,6 @@ ELSE
     OR ((aw候选[4] AND WORD#16#0003) = WORD#16#0001) THEN Result := 9; RETURN; END_IF;
     IF i新归属 <> 16 THEN
         dw值 := SHL(WORD_TO_DWORD(aw候选[2]), 16) OR WORD_TO_DWORD(aw候选[3]);
-        IF (dw值 = 0) OR (dw值 > DWORD#2147483647) THEN Result := 9; RETURN; END_IF;
         IF NOT 函数_额定值(AxisIndex := INT_TO_UINT(i新归属), Field := 2,
             Value := DWORD_TO_UDINT(dw值)) THEN Result := 9; RETURN; END_IF;
         di位置 := DWORD_TO_DINT(SHL(WORD_TO_DWORD(aw候选[0]), 16) OR WORD_TO_DWORD(aw候选[1]));

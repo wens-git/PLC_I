@@ -1,7 +1,7 @@
 """XS Studio interface constraints; these checks do not execute IEC code."""
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2] / "plc/src/03_pou"
+ROOT = Path(__file__).resolve().parents[2] / "plc/src/configuration"
 
 
 def test_shared_state_is_not_written_through_output_only_parameters():

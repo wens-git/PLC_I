@@ -6,7 +6,7 @@ from pathlib import Path
 
 def test_current_plc_sources_match_latest_compiler_record():
     root = Path(__file__).resolve().parents[2]
-    evidence = root / 'plc/evidence/review-fix-build-status.json'
+    evidence = root / 'plc/evidence/architecture-build-status.json'
     status = json.loads(evidence.read_text(encoding='utf-8'))
     assert status['success'] is True
     assert status['offline_only'] is True

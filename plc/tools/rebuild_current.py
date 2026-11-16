@@ -149,8 +149,40 @@ def main(api):
             raise RuntimeError('No active application')
         check_messages(api.system, api.Severity, emit, 'OPEN')
         result['stage'] = 'update'
+        # Retired project-only objects must not survive a source refactor.
+        for retired in (u'结构体_气缸工程',):
+            for obj in app.find(retired, True):
+                if hasattr(obj, 'textual_declaration'):
+                    obj.remove()
+                    emit('REMOVED ' + retired)
         for item in items:
             emit(update_object(app, item, api))
+        # Mirror source domains in the IDE instead of leaving a flat application.
+        domain_objects = {}
+        for relative in result['sources']:
+            domain = relative.replace('\\', '/').split('/')[2]
+            with io.open(os.path.join(ROOT, relative), encoding='utf-8-sig') as stream:
+                parsed = parse_source(os.path.basename(relative), stream.read())
+            domain_objects.setdefault(domain, []).extend(item[1] for item in parsed)
+        for domain, object_names in sorted(domain_objects.items()):
+            folder_name = 'SRC_' + domain
+            folders = [obj for obj in app.get_children(False) if obj.get_name() == folder_name]
+            if not folders:
+                app.create_folder(folder_name)
+                folders = [obj for obj in app.get_children(False) if obj.get_name() == folder_name]
+            if len(folders) != 1:
+                raise RuntimeError('Expected one source folder: ' + folder_name)
+            folder = folders[0]
+            for name in object_names:
+                obj = [value for value in app.find(name, True) if hasattr(value, 'textual_declaration')][0]
+                if obj.parent.get_name() != folder_name:
+                    import System
+                    engine = [assembly for assembly in System.AppDomain.CurrentDomain.GetAssemblies()
+                              if assembly.GetName().Name == 'ScriptEngine2'][0]
+                    script_object = engine.GetType('_3S.CoDeSys.ScriptEngine.BasicFunctionality.IScriptObject')
+                    extended = engine.GetType('_3S.CoDeSys.ScriptEngine.IExtendedObject`1').MakeGenericType(script_object)
+                    obj.move.Overloads[extended, System.Int32](folder, -1)
+            emit('SOURCE FOLDER ' + folder_name)
         result['stage'] = 'configure_task'
         wrappers = [obj for obj in app.find('PLC_PRG', True)
                     if hasattr(obj, 'textual_implementation')]

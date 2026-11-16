@@ -77,7 +77,7 @@ class ProtocolContractTests(unittest.TestCase):
         codes = [a["code"] for a in self.spec["alarms"]]
         self.assertEqual(len(codes), len(set(codes)))
         self.assertTrue(all(len(a["message"]) >= 6 and a["action"] for a in self.spec["alarms"]))
-        plc = (ROOT / "plc/src/03_pou/功能块_轴.st").read_text(encoding="utf-8") +             (ROOT / "plc/src/03_pou/功能块_气缸.st").read_text(encoding="utf-8")
+        plc = (ROOT / "plc/src/motion/功能块_轴.st").read_text(encoding="utf-8") +             (ROOT / "plc/src/cylinder/功能块_气缸.st").read_text(encoding="utf-8")
         import re
         emitted = {int(code) for code in re.findall(r"(?:Error|NewFault) := (\d{4});", plc)}
         self.assertEqual(emitted - set(codes), set(), "every PLC alarm code needs a catalogue entry")
@@ -111,7 +111,7 @@ class ProtocolContractTests(unittest.TestCase):
     def test_generated_artifacts_match_contract(self):
         from tools.check_protocol import render_markdown, render_st
         self.assertEqual((ROOT / "docs/register-map.md").read_text(encoding="utf-8"), render_markdown(self.spec))
-        self.assertEqual((ROOT / "plc/src/02_gvl/全局变量_地址表.gvl.st").read_text(encoding="utf-8"), render_st(self.spec))
+        self.assertEqual((ROOT / "plc/src/communication/全局变量_地址表.gvl.st").read_text(encoding="utf-8"), render_st(self.spec))
 
 
 if __name__ == "__main__":

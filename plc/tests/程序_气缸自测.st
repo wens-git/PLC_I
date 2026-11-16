@@ -174,6 +174,17 @@ CASE ui阶段 OF
     全局变量_气缸请求.ast请求[0].udi请求号 := 2;
     fb调度(StopAll := FALSE, Runtime := st运行时);
     IF st运行时.ast气缸[0].b运动中 OR 全局变量_气缸请求.ast请求[0].b忙 THEN w失败 := 23; END_IF;
+    (* 真实语义API：取消覆盖忙槽并登记新令牌；被拒绝动作保留该令牌。 *)
+    全局变量_气缸请求.ast请求[0].b忙 := TRUE;
+    全局变量_气缸请求.ast请求[0].b待下发 := TRUE;
+    IF NOT Cy取消(0) THEN w失败 := 24; END_IF;
+    udi夹紧请求号 := Cy设备状态[0].udi请求号;
+    IF (udi夹紧请求号 = 0)
+        OR (udi夹紧请求号 <> 全局变量_气缸请求.ast请求[0].udi请求号)
+        OR (全局变量_气缸请求.ast请求[0].w命令 <> 42) THEN w失败 := 25; END_IF;
+    IF Cy动点(0) OR Cy原点(0) THEN w失败 := 26; END_IF;
+    IF Cy设备状态[0].udi请求号 <> udi夹紧请求号 THEN w失败 := 27; END_IF;
+    IF Cy取消(54) OR Cy动点(54) OR Cy原点(54) THEN w失败 := 28; END_IF;
     lw已绑定气缸 := lw原绑定;
     b完成 := TRUE;
 END_CASE;

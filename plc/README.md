@@ -1,7 +1,13 @@
-# 当前 PLC 交付
+# PLC 当前架构与交付
 
-气缸升级工程：[FM_XJV1_Cylinder_v13.project](project/FM_XJV1_Cylinder_v13.project)，协议1.3、签名0x584A5633，47个ST源码文件。端口1502、32 Holding、1830 Input、4ms EtherCAT_Task保持不变。离线编译/代码生成0错误0警告，源码hash见[evidence/cylinder-upgrade-build-status.json](evidence/cylinder-upgrade-build-status.json)。本次没有连接或下载真实PLC，未完成现场验收。
+正式工程为 [FM_XJV1_Cylinder_v13.project](project/FM_XJV1_Cylinder_v13.project)。协议1.3，签名0x584A5633，1502端口，32 Holding/1830 Input，4ms EtherCAT_Task。
 
-原project/FM_XJV1.project保留为1.2基线，不能与新上位机混用。rebuild_current.py从原工程复制设备配置并按当前src新增/更新对象，在artifacts/plc-probe/build-*生成新工程和独立日志；不会覆盖原工程或连接设备。
+源码现按职责分为 entry、application、communication、configuration、motion、cylinder、hardware 七个域；XS工程使用对应SRC_*文件夹。架构、调用顺序、状态拥有者和维护规范见 [PLC架构](../docs/PLC架构.md)。
 
-使用方法见[气缸配置与业务接口](../docs/气缸配置与业务接口.md)。物理绑定默认全0，工程表中的未知I/O为65535；模块就绪须接真实诊断。新的气缸扫描自测源码位于tests，编译检查不等于执行通过。
+服务端拆为命令仲裁、诊断、发布、复位；主循环只展示扫描顺序，模式管理与轴组独立。Axis/Cy保留语义API，内部统一提交。单轴MC实例仍由唯一轴FB拥有，不分散到多个调用者。
+
+本轮编译证据见 [architecture-build-status.json](evidence/architecture-build-status.json)，实际工程对象核对见 [architecture-project-verification.json](evidence/architecture-project-verification.json)。历史证据保留追溯，不作为本轮源码通过证明。
+
+重建使用 tools/rebuild_current.py，从正式工程复制设备配置、导入当前源码、清理退役对象并镜像域文件夹；不登录、不下载。原FM_XJV1.project仅保留1.2历史基线，不能与当前上位机混用。
+
+物理气缸默认未绑定。I/O、真实模块诊断、限位接线及额定值仍需现场验收。IEC扫描自测未执行，不把Python源码契约测试或编译结果当作真实运动证明。

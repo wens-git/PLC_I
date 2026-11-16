@@ -94,6 +94,20 @@ class DeliveryTests(unittest.TestCase):
         path.write_text('{}', encoding='utf-8')
         self.assertEqual(source_hashes(self.root, 'desktop'), before)
 
+    def test_archive_contains_verified_files_and_rejects_modified_inputs(self):
+        from archive_delivery import archive
+        from zipfile import ZipFile
+        manifest = self.manifest(plc_evidence=self.evidence('plc'), desktop_evidence=self.evidence('desktop'))
+        (self.root / 'MANIFEST.json').write_text(json.dumps(manifest), encoding='utf-8')
+        target = self.root / 'artifacts/test.zip'
+        checksum = archive(self.root, target)
+        self.assertEqual(len(checksum), 64)
+        with ZipFile(target) as output:
+            self.assertEqual(set(output.namelist()), set(manifest['files']) | {'MANIFEST.json'})
+        (self.root / 'desktop/main.py').write_text('changed', encoding='utf-8')
+        with self.assertRaises(ValueError):
+            archive(self.root, self.root / 'artifacts/invalid.zip')
+
     def test_old_evidence_without_project_binding_rejected(self):
         name = self.evidence('plc')
         path = self.root / name

@@ -1,0 +1,98 @@
+REMOVED 结构体_气缸工程
+UPDATED 全局变量_错误码
+UPDATED 函数_动作许可
+UPDATED 功能块_暂停恢复
+CREATED 功能块_模式管理
+CREATED 功能块_系统复位
+UPDATED 功能块_输入滤波
+UPDATED 功能块_运行控制
+UPDATED 结构体_运行时
+UPDATED 全局变量_地址表
+UPDATED 全局变量_通信映像
+UPDATED 函数_校验
+UPDATED 功能块_服务端
+CREATED 功能块_状态发布
+UPDATED 功能块_看门狗
+CREATED 功能块_诊断汇总
+UPDATED 类型_命令区
+UPDATED 类型_发布区
+CREATED 结构体_诊断摘要
+CREATED 结构体_通信状态
+UPDATED 全局变量_保持区
+UPDATED 函数_参数码
+CREATED 函数_点位归属
+UPDATED 函数_额定值
+UPDATED 功能块_配置
+UPDATED 结构体_配置
+UPDATED Cy动点
+UPDATED Cy原点
+UPDATED Cy取消
+CREATED Cy提交
+UPDATED Cy状态
+UPDATED Cy确认
+UPDATED Cy阀型
+UPDATED 全局变量_Cy设备
+UPDATED 全局变量_气缸请求
+UPDATED 功能块_气缸
+UPDATED 功能块_气缸调度
+UPDATED 气缸_提交
+UPDATED 气缸_配置有效
+UPDATED 结构体_Cy气缸配置
+UPDATED 结构体_Cy状态
+UPDATED 结构体_Cy设备
+UPDATED 结构体_气缸状态
+UPDATED 结构体_气缸请求
+UPDATED 程序_主循环
+UPDATED 全局变量_气缸IO映像
+UPDATED 全局变量_气缸工程
+UPDATED 全局变量_物理IO
+UPDATED 全局变量_硬件
+UPDATED 全局变量_绑定
+UPDATED 全局变量_运行配置
+UPDATED 程序_气缸绑定
+UPDATED 程序_气缸输入映射
+UPDATED 程序_气缸输出映射
+UPDATED Axis_Home
+UPDATED Axis_MoveToPoint
+UPDATED Axis_Stop
+CREATED Axis_提交
+UPDATED Axis状态
+UPDATED 全局变量_轴请求
+UPDATED 功能块_轴
+CREATED 功能块_轴组
+UPDATED 功能块_轴请求监视
+UPDATED 结构体_Axis状态
+UPDATED 结构体_轴状态
+UPDATED 结构体_轴请求
+SOURCE FOLDER SRC_application
+SOURCE FOLDER SRC_communication
+SOURCE FOLDER SRC_configuration
+SOURCE FOLDER SRC_cylinder
+SOURCE FOLDER SRC_entry
+SOURCE FOLDER SRC_hardware
+SOURCE FOLDER SRC_motion
+PLC_PRG textual wrappers: 1
+MOTION TASK VERIFIED owner=EtherCAT_Task calls=1 PLC_PRG
+REBUILD CATEGORY 97f48d64-a2a3-4856-b640-75c046e37ea9
+------ 开始构建应用程序 Device.Application -------
+代码典型化...
+完整编译 -- 0 错误, 0 警告
+
+CODE GENERATION CATEGORY 97f48d64-a2a3-4856-b640-75c046e37ea9
+------ 开始构建应用程序 Device.Application -------
+此应用程序是最新的
+生成代码...
+生成全局初始化...
+生成代码初始化...
+生成重定位...
+生成代码的大小:  1406676 字节
+全局数据的大小: 302253 字节
+为代码和数据分配的总内存大小: 1687060 字节
+内存区域0包含 输入, 输出 和 不安全行为：大小：1048576字节，最高使用的地址：288200，最大连续存储器间隙：760376字节（72％）
+内存区域1包含 保留数据：大小：4096字节，最高使用的地址：2584，最大连续存储器间隙：1512字节（36％）
+内存区域2包含 持久性数据：大小：22144字节，最高使用的地址：18448，最大连续存储器间隙：3696字节（16％）
+内存区域3包含 代码：大小：1828688字节，最高使用的地址：1406680，最大连续存储器间隙：422008字节（23％）
+内存区域4包含 内存：大小：262144字节，最高使用的地址：262144，最大连续存储器间隙：0字节（0％）
+内存区域5包含 数据：大小：1048576字节，最高使用的地址：280380，最大连续存储器间隙：768196字节（73％）
+构建完整--0错误,0警告：准备下载
+ACCEPTED C:\Users\Admin\Downloads\PLC_I-main\PLC_I-main\artifacts\plc-probe\architecture-build-10\FM_XJV1_rebuilt.project

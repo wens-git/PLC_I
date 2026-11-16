@@ -1,0 +1,111 @@
+{
+  "sources": {
+    "plc\\src\\motion\\\u529f\u80fd\u5757_\u8f74\u8bf7\u6c42\u76d1\u89c6.st": "ee717fbd8465c56616c0ed99375a1ffef79b5a9f8397e63981eed56c8da66f31", 
+    "plc\\src\\cylinder\\Cy\u9600\u578b.st": "b5f5270b3b82591198ff535fb9207106f9c9425e73d69ea586ae91cf647fdeff", 
+    "plc\\src\\configuration\\\u51fd\u6570_\u70b9\u4f4d\u5f52\u5c5e.st": "c100a143de746424113e436d2ee8d192a5b1bafd7aafcfa08df81dcad8e43070", 
+    "plc\\src\\communication\\\u529f\u80fd\u5757_\u670d\u52a1\u7aef.st": "a013d89213d2cbae3d98b86762e7a80914348bc85fe9fb9dc41a81a04edceb00", 
+    "plc\\src\\motion\\Axis_Home.st": "d9ec702507eb83faf4af1221af4568f0508989ced0ed1acf03ce5f13ea706bf1", 
+    "plc\\src\\application\\\u529f\u80fd\u5757_\u8f93\u5165\u6ee4\u6ce2.st": "683fe016049a02c847211b091b3fafd3f2717d52bd08c68f126932a6147225a8", 
+    "plc\\src\\hardware\\\u5168\u5c40\u53d8\u91cf_\u7269\u7406IO.gvl.st": "84e4c82c7a496ac2b0460f72e45da03da3ddaeedad826ad7ce0779b89090abb6", 
+    "plc\\src\\motion\\Axis_\u63d0\u4ea4.st": "2d6b3c78888fd5cc2defbd2dfd8ad25ebacc857d77a8c965764f5dc6d22893d4", 
+    "plc\\src\\cylinder\\Cy\u63d0\u4ea4.st": "c60f6dd03e85da3917c69d7010be610242fc02ad51b9a3b026dcec1e608382c9", 
+    "plc\\src\\motion\\Axis_MoveToPoint.st": "a183a433c1a12c036a20dabbc7dbb1dc71ff3fd1c0923595634a4a04339f0fdb", 
+    "plc\\src\\cylinder\\\u7ed3\u6784\u4f53_Cy\u6c14\u7f38\u914d\u7f6e.st": "5abc502f0afc30f5bb1c12c734aa21cddab1b0d29efba31c4dc76401e4a1865d", 
+    "plc\\src\\hardware\\\u7a0b\u5e8f_\u6c14\u7f38\u8f93\u5165\u6620\u5c04.st": "dfbb9abd844e9a2a251b17a22e1cb3e407407999ab6e1c34e76465376a2336a8", 
+    "plc\\src\\communication\\\u529f\u80fd\u5757_\u770b\u95e8\u72d7.st": "f6121572c7641dc9528bfa5929b5799eb248126529c239b1f9facff10dbfa91f", 
+    "plc\\src\\hardware\\\u5168\u5c40\u53d8\u91cf_\u8fd0\u884c\u914d\u7f6e.gvl.st": "b6b33e2f9ba700264400df22ed3fbc713f53112e64be19b9b124bff94d239352", 
+    "plc\\src\\cylinder\\\u529f\u80fd\u5757_\u6c14\u7f38.st": "82a8a0b87ba12192bfee93079b4923b3c0915c4d33225c8bc998d3db2021b57a", 
+    "plc\\src\\motion\\\u529f\u80fd\u5757_\u8f74\u7ec4.st": "38ed8ca02684815d5113714d77844ec3c8ade532c99e1176adabaff1911a59be", 
+    "plc\\src\\application\\\u529f\u80fd\u5757_\u7cfb\u7edf\u590d\u4f4d.st": "4f46954fc97e002a88efb2d2abb0fe270840d20364797164ef99b4cd84a91bac", 
+    "plc\\src\\configuration\\\u5168\u5c40\u53d8\u91cf_\u4fdd\u6301\u533a.gvl.st": "d707a60394c3eccac857d42308bfa6c92fad59a41926326a84f364f98aef279e", 
+    "plc\\src\\cylinder\\\u529f\u80fd\u5757_\u6c14\u7f38\u8c03\u5ea6.st": "c856a0ba06af076b5c51a82262b5b02d1fb3f55d9c37dff2397798165f548157", 
+    "plc\\src\\motion\\\u7ed3\u6784\u4f53_\u8f74\u8bf7\u6c42.st": "1d5c5c88f70a2a30edea9f49e1231b2c4a06faef7584a338e27ac3b815494ecb", 
+    "plc\\src\\cylinder\\Cy\u52a8\u70b9.st": "72c40f19d6c4615926c5569f06dc86ac60ca3947ff68ab0f004f0d49367460fa", 
+    "plc\\src\\motion\\\u7ed3\u6784\u4f53_Axis\u72b6\u6001.st": "ec05f66a10b51d9ed107ce269f1a95570506eb5f0c6b172359c43de2e0172de0", 
+    "plc\\src\\communication\\\u51fd\u6570_\u6821\u9a8c.st": "42eaaddccc46a104fd28b9e2a51b88ad9f1a9e9ca16a6284c8c4d4f794d0ba84", 
+    "plc\\src\\configuration\\\u7ed3\u6784\u4f53_\u914d\u7f6e.st": "a8f2876bc9fa02bb645c2a39141910a7d0d4ec693f09f6ea439a2579fb0d68be", 
+    "plc\\src\\communication\\\u5168\u5c40\u53d8\u91cf_\u5730\u5740\u8868.gvl.st": "82ea0ebc7bf410a35a56d4e180a06878a7bf5270efd734e375d520fe549a7568", 
+    "plc\\src\\application\\\u529f\u80fd\u5757_\u6682\u505c\u6062\u590d.st": "4d2a9d962287ada5b5f4294053cab18168d8b20376ea06684560c0a8ea16dafe", 
+    "plc\\src\\cylinder\\\u6c14\u7f38_\u914d\u7f6e\u6709\u6548.st": "6b535b3b5135e7aa9eec1404efc78a9f54ec10c504fb10238a9697fb93668c44", 
+    "plc\\src\\cylinder\\\u7ed3\u6784\u4f53_\u6c14\u7f38\u8bf7\u6c42.st": "dc375c21003f9412b787e1d33a0ec83a746c7f780ed40a3355ff40803a809f69", 
+    "plc\\src\\entry\\\u7a0b\u5e8f_\u4e3b\u5faa\u73af.st": "13afee4ad1cf410c2740a21a1d673ff76a865619b0b71a6da3cb50345a795034", 
+    "plc\\src\\hardware\\\u5168\u5c40\u53d8\u91cf_\u7ed1\u5b9a.gvl.st": "7f59f02fb39537079f9687e817efa49efc3ead14c620597569f286676dafcc84", 
+    "plc\\src\\hardware\\\u7a0b\u5e8f_\u6c14\u7f38\u8f93\u51fa\u6620\u5c04.st": "956c57749180c685a209d632e6c1c32a1041550ea325151e3e8dd842a6d08924", 
+    "plc\\src\\cylinder\\Cy\u786e\u8ba4.st": "5e99908dcf12f9d6835baa876a5a8d9d66924900acdce3e4e06d4fa4aa3a1fe2", 
+    "plc\\src\\cylinder\\\u7ed3\u6784\u4f53_Cy\u72b6\u6001.st": "5c31a358968b4e5326bb6ca24fee7a04c75369fb03c08246103611686be00cb6", 
+    "plc\\src\\configuration\\\u529f\u80fd\u5757_\u914d\u7f6e.st": "159af8f39d67b414f3b0dd8ffecb0adb606f01353329a720501b1a7e5eca98b8", 
+    "plc\\src\\cylinder\\\u6c14\u7f38_\u63d0\u4ea4.st": "bb6f7e0e3e4ad460b2a5670ecd1b345c4c242b6cc79066b00fc043df72b64c68", 
+    "plc\\src\\hardware\\\u5168\u5c40\u53d8\u91cf_\u786c\u4ef6.gvl.st": "94811b18236ccb5144eaa97272b15ddda6093cd031618a6c2cb0ba2886855bf7", 
+    "plc\\src\\application\\\u529f\u80fd\u5757_\u6a21\u5f0f\u7ba1\u7406.st": "9a4a8db25a440ac8cda327c95b7460fdd51ccdbb95d9325af64d9dabd6a959e3", 
+    "plc\\src\\application\\\u5168\u5c40\u53d8\u91cf_\u9519\u8bef\u7801.gvl.st": "436257e668f900e0c4e5b1a0ec1ee75f7d3295b0ec23d12abcfb1c4dc2ae3dd8", 
+    "plc\\src\\application\\\u7ed3\u6784\u4f53_\u8fd0\u884c\u65f6.st": "6e4c01ed62d73553c36ed0d545f3c600e57528dc13811ab11cf169f7e6ca3285", 
+    "plc\\src\\cylinder\\\u7ed3\u6784\u4f53_Cy\u8bbe\u5907.st": "333555053d54162b7956f5c6a56c03e4fa65cec8d69466b366c46588ea894155", 
+    "plc\\src\\configuration\\\u51fd\u6570_\u989d\u5b9a\u503c.st": "9c3ef62052b0cb8fcdd8144b63f1acc83eed2a1b35e2bb53a5dfc5befc740301", 
+    "plc\\src\\cylinder\\\u5168\u5c40\u53d8\u91cf_Cy\u8bbe\u5907.gvl.st": "3dc69d2360496750a43a8484d052a1cbef740dd14edd4113adf50ee62aaacb9e", 
+    "plc\\src\\cylinder\\\u7ed3\u6784\u4f53_\u6c14\u7f38\u72b6\u6001.st": "625786c6116bf70a39376a2d6ac185d50a42238df3f2705dffa121ca26569ae3", 
+    "plc\\src\\communication\\\u7ed3\u6784\u4f53_\u901a\u4fe1\u72b6\u6001.st": "0c8aa3efca287580f693ccc5372cb262141bcf89f0753b3bd203682863827379", 
+    "plc\\src\\communication\\\u5168\u5c40\u53d8\u91cf_\u901a\u4fe1\u6620\u50cf.gvl.st": "ce787b6f95cb4b4caf3ac4d85e30b31a22a301aa3d026832481fb31d72f60fe7", 
+    "plc\\src\\cylinder\\\u5168\u5c40\u53d8\u91cf_\u6c14\u7f38\u8bf7\u6c42.gvl.st": "ad1c415561f069cb795b3a8d318274c5da715bac1ad3f2962832d5b588407920", 
+    "plc\\src\\motion\\\u529f\u80fd\u5757_\u8f74.st": "20d216e8d55ca722be51f9869efc1b00ddd0f2d1986a790a2129c572eec8913d", 
+    "plc\\src\\motion\\\u7ed3\u6784\u4f53_\u8f74\u72b6\u6001.st": "9a6430a37d69a86d4556427c66b875465ce5c3524d997adc25564fe0dd3dea56", 
+    "plc\\src\\communication\\\u529f\u80fd\u5757_\u8bca\u65ad\u6c47\u603b.st": "a2f83036e55ada807b3253cca15fdf590f38b65687e29a03107461952d2402c0", 
+    "plc\\src\\cylinder\\Cy\u72b6\u6001.st": "18895af07be67737b8b757dc148f8f9c84d2c81b17968984fd47d6dcbcbcbc15", 
+    "plc\\src\\configuration\\\u51fd\u6570_\u53c2\u6570\u7801.st": "0022722e5ed26f12c9ebd9fec2afacb6fe0eb552a5b3104635e6f96c0de7fd32", 
+    "plc\\src\\communication\\\u7c7b\u578b_\u547d\u4ee4\u533a.st": "25fc8fc593740b16e415c81181a30cec5a2846601ba4ab1bf54443b6f9972176", 
+    "plc\\src\\communication\\\u7ed3\u6784\u4f53_\u8bca\u65ad\u6458\u8981.st": "ece0e5efe14848c099e2177ca8fa8851ea3bd6c062ac015f235600e1cb8597f5", 
+    "plc\\src\\cylinder\\Cy\u539f\u70b9.st": "8090a1e861c8b25994e82b67a2a60879e3a6da17338eed3a052bb19392f526f2", 
+    "plc\\src\\cylinder\\Cy\u53d6\u6d88.st": "075d67abca72bbe070f86fe142e33ddf9442779e60334156876842234d528a2a", 
+    "plc\\src\\hardware\\\u5168\u5c40\u53d8\u91cf_\u6c14\u7f38\u5de5\u7a0b.gvl.st": "46193e5b47b537c330f2f64393be84af80ea03bad39541cea385d618fd073149", 
+    "plc\\src\\motion\\Axis_Stop.st": "3c13ea2a993e2a9fc0a034f5e5f7764e03bbc24d4d9126359790a33bc385cde1", 
+    "plc\\src\\hardware\\\u7a0b\u5e8f_\u6c14\u7f38\u7ed1\u5b9a.st": "2e4bd47652feb10a93c03c93e63fc56c62c40cea66ecf98485a81baace4f07aa", 
+    "plc\\src\\motion\\Axis\u72b6\u6001.st": "41b4c09dca4d3bd1d9b7ea0574cb41a574b921694f3d2d8c1fcaa0341f012a49", 
+    "plc\\src\\hardware\\\u5168\u5c40\u53d8\u91cf_\u6c14\u7f38IO\u6620\u50cf.gvl.st": "3c504940dd2b77ef17ed01c5173b355fb562ec6cb6a3a0d6e6206e58425fa2f1", 
+    "plc\\src\\application\\\u51fd\u6570_\u52a8\u4f5c\u8bb8\u53ef.st": "f194c05395c7e705f4f5594440d5d319d8edf01d808209e1f3189da818e4c1e8", 
+    "plc\\src\\motion\\\u5168\u5c40\u53d8\u91cf_\u8f74\u8bf7\u6c42.gvl.st": "e8822fe5e450625ea129dd273c17e703e14f8d3bcc27db4dc23bfd32731699d3", 
+    "plc\\src\\application\\\u529f\u80fd\u5757_\u8fd0\u884c\u63a7\u5236.st": "f07dd60934c92adfc0a000777db959903ff7f42638a1bb3c2ff3305c835e9b90", 
+    "plc\\src\\communication\\\u529f\u80fd\u5757_\u72b6\u6001\u53d1\u5e03.st": "55c97fc26580710ec95e788f9dd17f61b366a51c89a69ea6685101a8cac1652d"
+  }, 
+  "entry_program": "PLC_PRG -> \u7a0b\u5e8f_\u4e3b\u5faa\u73af", 
+  "success": true, 
+  "completed_at": "2026-11-16T03:34:27.614000Z", 
+  "offline_only": true, 
+  "domains": [
+    "application", 
+    "communication", 
+    "configuration", 
+    "cylinder", 
+    "entry", 
+    "hardware", 
+    "motion"
+  ], 
+  "verified_objects": 65, 
+  "task_call_count": 1, 
+  "bus_bindings": [
+    {
+      "task": "EtherCAT_Task", 
+      "device": "HIGH_SPEED_IO"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "EtherCAT"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "EtherCAT"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "Ethernet"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "Ethernet"
+    }, 
+    {
+      "task": "EtherCAT_Task", 
+      "device": "ModbusTCP_Slave_XJV1"
+    }
+  ], 
+  "project_sha256": "564cf2a9a9b2387168cbd1932145496a1bdc7f3ee3e76f14211df3bbd340d618", 
+  "task_owner": "EtherCAT_Task"
+}

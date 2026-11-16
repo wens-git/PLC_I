@@ -1,5 +1,9 @@
 # PySide6 + Web + PLC 当前交付
 
+## PLC 架构重构与归档
+
+PLC 已按职责整理为七个域，服务端与主循环职责拆分，Axis/Cy请求提交合并；说明见 [PLC架构](docs/PLC架构.md)。本轮生产工程及证据以格式2清单为准。完整交付包由 `python tools/archive_delivery.py --output artifacts/releases/PLC_I-architecture.zip` 生成，并附SHA256；Git仓库保留源码、正式工程和验证证据，桌面大体积运行库在本地完整归档中。
+
 ## 本次交付状态与重建规则
 
 本轮 P1 控制链修复与安全状态以当前源码及本轮 evidence 为准：清故障不自动使能，故障清除后仍须用户显式请求使能。详细结果见 [本轮修复报告](docs/修复结果-20261115.md)。PLC 编译、桌面模拟与真实设备验收分别记录，不能互相替代。
