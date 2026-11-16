@@ -75,8 +75,23 @@ class CylinderChainTests(unittest.TestCase):
     def test_prg_instantiates_cylinder_consumers_without_wired_outputs(self):
         prg = st("entry/程序_主循环.st")
         self.assertIn("fb气缸调度 : 功能块_气缸调度;", prg)
-        self.assertIn("b输出6 := FALSE;", prg)
-        self.assertIn("b输出7 := FALSE;", prg)
+        self.assertIn("程序_气缸输入映射();", prg)
+        self.assertIn("程序_气缸输出映射();", prg)
+        io = st("hardware/全局变量_物理IO.gvl.st")
+        for name in ("b启动按钮 AT %IX0.0", "b暂停按钮 AT %IX0.1",
+                     "b复位按钮 AT %IX0.2", "b急停按钮 AT %IX0.3",
+                     "b备用输入 AT %IX0.4",
+                     "bCY00_动点传感器 AT %IX0.5", "bCY00_原点传感器 AT %IX0.6",
+                     "bCY00_动点阀 AT %QX0.2", "bCY00_原点阀 AT %QX0.3",
+                     "bCY01_动点传感器 AT %IX0.7", "bCY01_动点阀 AT %QX0.6",
+                     "bCY01_原点阀 AT %QX0.7"):
+            self.assertIn(name, io)
+        direct_in = st("hardware/程序_气缸输入映射.st")
+        self.assertIn("ab气缸动点传感器[0] := bCY00_动点传感器;", direct_in)
+        self.assertIn("ab气缸动点传感器[1] := bCY01_动点传感器;", direct_in)
+        direct_out = st("hardware/程序_气缸输出映射.st")
+        self.assertIn("bCY00_动点阀 := ab气缸动点输出[0];", direct_out)
+        self.assertIn("bCY01_原点阀 := ab气缸原点输出[1];", direct_out)
         loop = st("cylinder/功能块_气缸调度.st")
         for field in ("DelayMs", "HomeDelayMs", "TimeoutMs", "HasWorkSensor", "HasOriginSensor", "Token", "CancelMode"):
             self.assertIn(field + " :=", loop)
@@ -86,6 +101,18 @@ class CylinderChainTests(unittest.TestCase):
         for array in ("ab气缸动点传感器", "ab气缸原点传感器",
                       "ab气缸动点输出", "ab气缸原点输出"):
             self.assertIn(f"{array} : ARRAY[0..53] OF BOOL;", hardware)
+
+    def test_cylinder_table_uses_terminal_numbers_with_comments(self):
+        table = st("hardware/全局变量_气缸工程.gvl.st")
+        for fragment in ("(* CY00", "out动点 := 2, out原点 := 3",
+                         "e动点确认 := Cy确认.传感器, in动点 := 5",
+                         "e原点确认 := Cy确认.传感器, in原点 := 6",
+                         "out动点 := 6, out原点 := 7",
+                         "e原点确认 := Cy确认.延时",
+                         "52((已绑定 := FALSE))"):
+            self.assertIn(fragment, table)
+        self.assertNotIn("Cy出_", table)
+        self.assertNotIn("Cy入_", table)
 
     def test_server_cylinder_live_stays_unpublished_until_wired(self):
         server = st("communication/功能块_状态发布.st")

@@ -42,6 +42,15 @@ class CylinderIoLayerTests(unittest.TestCase):
         self.assertLess(prg.index("程序_气缸输入映射();"), prg.index("fb气缸调度(StopAll :="))
         self.assertLess(prg.index("fb气缸调度(StopAll :="), prg.index("程序_气缸输出映射();"))
 
+    def test_direct_wiring_lives_in_the_two_mapping_programs(self):
+        inputs = st("hardware/程序_气缸输入映射.st")
+        self.assertIn("ab气缸动点传感器[0] := bCY00_动点传感器;", inputs)
+        self.assertIn("ab气缸原点传感器[0] := bCY00_原点传感器;", inputs)
+        self.assertIn("ab气缸动点传感器[1] := bCY01_动点传感器;", inputs)
+        outputs = st("hardware/程序_气缸输出映射.st")
+        self.assertIn("bCY00_动点阀 := ab气缸动点输出[0];", outputs)
+        self.assertIn("bCY01_原点阀 := ab气缸原点输出[1];", outputs)
+
     def test_removed_manual_wiring_flags_are_not_used(self):
         for path in ("application/函数_动作许可.st", "communication/功能块_服务端.st",
                      "cylinder/功能块_气缸调度.st"):

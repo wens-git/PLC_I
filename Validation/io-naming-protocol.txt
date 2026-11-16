@@ -1,0 +1,2 @@
+Register budget: holding 32 + input 1830 = 1862 WORD; names 0 WORD (host-owned).
+Protocol artifact check: 0 errors (no PLC compilation performed).

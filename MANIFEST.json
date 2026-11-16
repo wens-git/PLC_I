@@ -1,10 +1,10 @@
 {
   "format": 2,
-  "generated_at": "2026-11-16T14:36:22.469737+00:00",
+  "generated_at": "2026-11-16T16:50:26.477646+00:00",
   "product": "FM_GPTPRO PySide6 + Web + QWebChannel",
   "production_project": {
     "path": "plc/project/FM_XJV1_Cylinder_v13.project",
-    "sha256": "bf5a0d6b9add6ddc438a8be0a3e8907852984ce98216bd63d98cbfc364c6ace1"
+    "sha256": "42036f097a2ad1997b472b32a18d6078ca553fd43e30a9a82e52e08371d21e7f"
   },
   "plc_sources": {
     "plc/src/application/全局变量_错误码.gvl.st": "436257e668f900e0c4e5b1a0ec1ee75f7d3295b0ec23d12abcfb1c4dc2ae3dd8",
@@ -44,21 +44,21 @@
     "plc/src/cylinder/功能块_气缸调度.st": "c856a0ba06af076b5c51a82262b5b02d1fb3f55d9c37dff2397798165f548157",
     "plc/src/cylinder/气缸_提交.st": "bb6f7e0e3e4ad460b2a5670ecd1b345c4c242b6cc79066b00fc043df72b64c68",
     "plc/src/cylinder/气缸_配置有效.st": "6b535b3b5135e7aa9eec1404efc78a9f54ec10c504fb10238a9697fb93668c44",
-    "plc/src/cylinder/结构体_Cy气缸配置.st": "5abc502f0afc30f5bb1c12c734aa21cddab1b0d29efba31c4dc76401e4a1865d",
+    "plc/src/cylinder/结构体_Cy气缸配置.st": "45f41446ee5085a9c96a3c3aba2e4b197a3062a4ca9acdfafd6aa93bf19d26dd",
     "plc/src/cylinder/结构体_Cy状态.st": "5c31a358968b4e5326bb6ca24fee7a04c75369fb03c08246103611686be00cb6",
     "plc/src/cylinder/结构体_Cy设备.st": "333555053d54162b7956f5c6a56c03e4fa65cec8d69466b366c46588ea894155",
     "plc/src/cylinder/结构体_气缸状态.st": "625786c6116bf70a39376a2d6ac185d50a42238df3f2705dffa121ca26569ae3",
     "plc/src/cylinder/结构体_气缸请求.st": "dc375c21003f9412b787e1d33a0ec83a746c7f780ed40a3355ff40803a809f69",
-    "plc/src/entry/程序_主循环.st": "13afee4ad1cf410c2740a21a1d673ff76a865619b0b71a6da3cb50345a795034",
+    "plc/src/entry/程序_主循环.st": "08a3a75d319e4763ddeb88add0726b6db23d60afda4d453f037fe8d19af51e78",
     "plc/src/hardware/全局变量_气缸IO映像.gvl.st": "3c504940dd2b77ef17ed01c5173b355fb562ec6cb6a3a0d6e6206e58425fa2f1",
-    "plc/src/hardware/全局变量_气缸工程.gvl.st": "46193e5b47b537c330f2f64393be84af80ea03bad39541cea385d618fd073149",
-    "plc/src/hardware/全局变量_物理IO.gvl.st": "84e4c82c7a496ac2b0460f72e45da03da3ddaeedad826ad7ce0779b89090abb6",
+    "plc/src/hardware/全局变量_气缸工程.gvl.st": "5a5652b6c14b6c78d58bc4383bee3d9a05c567a3401f62f9d70c35a462d7b20d",
+    "plc/src/hardware/全局变量_物理IO.gvl.st": "3d699ec524e302668ff8a73984d4c1287699e0b17439c1d97ed4ea076857746b",
     "plc/src/hardware/全局变量_硬件.gvl.st": "94811b18236ccb5144eaa97272b15ddda6093cd031618a6c2cb0ba2886855bf7",
     "plc/src/hardware/全局变量_绑定.gvl.st": "7f59f02fb39537079f9687e817efa49efc3ead14c620597569f286676dafcc84",
-    "plc/src/hardware/全局变量_运行配置.gvl.st": "b6b33e2f9ba700264400df22ed3fbc713f53112e64be19b9b124bff94d239352",
+    "plc/src/hardware/全局变量_运行配置.gvl.st": "3dcd217df66f27fa6000a5d9822995468477e4000ebbf1c9fc70ae95bbadc3c1",
     "plc/src/hardware/程序_气缸绑定.st": "2e4bd47652feb10a93c03c93e63fc56c62c40cea66ecf98485a81baace4f07aa",
-    "plc/src/hardware/程序_气缸输入映射.st": "dfbb9abd844e9a2a251b17a22e1cb3e407407999ab6e1c34e76465376a2336a8",
-    "plc/src/hardware/程序_气缸输出映射.st": "956c57749180c685a209d632e6c1c32a1041550ea325151e3e8dd842a6d08924",
+    "plc/src/hardware/程序_气缸输入映射.st": "11352587b613e69413b916f609c86c22be76a75fe64e9bf6c6162cfa76b44ac2",
+    "plc/src/hardware/程序_气缸输出映射.st": "2209b25769f080f0e5178e120482659076f3e73399443692e12e85ee5a4473ac",
     "plc/src/motion/Axis_Home.st": "d9ec702507eb83faf4af1221af4568f0508989ced0ed1acf03ce5f13ea706bf1",
     "plc/src/motion/Axis_MoveToPoint.st": "a183a433c1a12c036a20dabbc7dbb1dc71ff3fd1c0923595634a4a04339f0fdb",
     "plc/src/motion/Axis_Stop.st": "3c13ea2a993e2a9fc0a034f5e5f7764e03bbc24d4d9126359790a33bc385cde1",
@@ -96,8 +96,8 @@
     "backend/tests/test_plc_architecture.py": "784729e640a7e5659d4dbda86c3392e2677fd2a40e716275e02e90be2e51f176",
     "backend/tests/test_plc_compiler_contract.py": "5d121b70ccec1d23033163f4f1e33491fb031797d3afc839331fd705f1b8d40e",
     "backend/tests/test_plc_config_source.py": "f64249807a768b1d662d897ba9e4567d2d0e2040a3dd87993bd115969d39508b",
-    "backend/tests/test_plc_cylinder_io.py": "f78e4bae1f24a4ac2a302bda4a29ac76abe88d6195545c04c8888e2aa31f2632",
-    "backend/tests/test_plc_cylinder_source.py": "40f1603c4f46f6cd0f0104210dc25b6b0466dc62810b7fa2e2b7be2075fc9cec",
+    "backend/tests/test_plc_cylinder_io.py": "aa3cd8a4384d2e6b182a48bd1eef788566d445e97b7fe887deb6d047defbe98f",
+    "backend/tests/test_plc_cylinder_source.py": "b7ec6617642eeda3def3e9919b3c9198401a63f60a8fde9a932dfb7b152a3f7e",
     "backend/tests/test_plc_motion_source.py": "593e2d6a541d76176e07789258c9b29a7ea596fdb182b0ddcb6da5fb2ace068d",
     "backend/tests/test_plc_runtime_source.py": "84b0e829f651a47ff26275679894d35b06ff67eb05e17bce5bafb75a497fd37b",
     "backend/tests/test_plc_tool_paths.py": "e508630d612d6ba14508c2b6919c4af3972513f211834ec5d26eb1036bed1ca5",
@@ -160,51 +160,35 @@
     "status": "passed",
     "evidence": {
       "path": "plc/evidence/architecture-build-status.json",
-      "sha256": "ebb8419857639a336d57c0bae61ae145dab606044194f7b9441e81a12a0200f7"
+      "sha256": "e98a989883bf24c8f17bcc942dc09dedd810d9ee30210ed4eb86b5602d6ebde1"
     }
   },
   "desktop_build": {
-    "status": "passed",
-    "evidence": {
-      "path": "Validation/architecture-desktop-build.json",
-      "sha256": "28ba941cc4a985ddc5cd3b90cc741c89fab3c56d529d473da2eb2339ec36e6cc"
-    }
+    "status": "not_run"
   },
   "verification": {
     "python_tests": {
       "status": "passed",
       "evidence": {
-        "path": "Validation/architecture-python.json",
-        "sha256": "865f5bb20b77f933024a31b5374794ddd461489dd1927504ec33e2ed34e94c32"
+        "path": "Validation/io-naming-python-tests.json",
+        "sha256": "903e4c41d4f0fd044c8f6b19f47fe1f98382cad30d0ced8a266b5313d22b0b20"
       }
     },
     "frontend_tests": {
-      "status": "passed",
-      "evidence": {
-        "path": "Validation/architecture-frontend.json",
-        "sha256": "a8411b226f441d75bb4e30835cd46bdbfa73d1637faf5f9e78a995a5f2d4c69e"
-      }
+      "status": "not_run"
     },
     "protocol_check": {
       "status": "passed",
       "evidence": {
-        "path": "Validation/architecture-protocol.json",
-        "sha256": "1dc33655994d3e8c319fc35174e325778b61a4394e6fdc9553c990b57446f2b0"
+        "path": "Validation/io-naming-protocol.json",
+        "sha256": "dfd8c1a165796020d94060ceb27f493092f404673fafeea8a34fa29205032dae"
       }
     },
     "source_smoke": {
-      "status": "passed",
-      "evidence": {
-        "path": "Validation/architecture-source-smoke.json",
-        "sha256": "cae820f60a6d92a8beebd5615b352da53a7ee5947fa819f12b12fa59566313f2"
-      }
+      "status": "not_run"
     },
     "packaged_smoke": {
-      "status": "passed",
-      "evidence": {
-        "path": "Validation/architecture-packaged-smoke.json",
-        "sha256": "7f3d232bd1b8502cb37ef08bea18760dd41a611a7bf0cc1ad1cef52f8544decc"
-      }
+      "status": "not_run"
     },
     "real_plc_acceptance": {
       "status": "not_run"
@@ -3277,6 +3261,11 @@
     "Validation/desktop.png": "6f70db24ec5c9b67ec1c172d6e67668cbef6893216e70a5c3bfaf3472a4e4857",
     "Validation/final-path-smoke.json": "aa7b6d7e54ff93799f7223f0e6226d0570265b23b092cf8ffa14af457c916d27",
     "Validation/final-path-smoke.png": "71272301c545275d77e8d46f6f1ebfd366b5a69be249737f4b74a28bd193955e",
+    "Validation/io-naming-protocol.json": "dfd8c1a165796020d94060ceb27f493092f404673fafeea8a34fa29205032dae",
+    "Validation/io-naming-protocol.txt": "4ffdfd4e3cad125916f4f0ba90b481246c6ad216563bc9e18b8346e8192be373",
+    "Validation/io-naming-python-tests.json": "903e4c41d4f0fd044c8f6b19f47fe1f98382cad30d0ced8a266b5313d22b0b20",
+    "Validation/io-naming-python-tests.txt": "81189074f1da4291a4536341fcc9e6c18c0763f17a74ab48a00793bc2ce9738d",
+    "Validation/io-naming-verification.json": "501ec2262e936508646eb054ad851afee0b453d469f1ee74c31e7f2255053f7f",
     "Validation/packaged-smoke.json": "df2b3c2ce567fba9abc1bf7a3c1253903a9d44e09b99d50a5a58871cf2dbeb4c",
     "Validation/results.json": "f4a5c681d1fe0d7b44137d63b90ffdb788bf9e72134d4cea0d8675dd83cb132c",
     "Validation/review-fix-audit.json": "8dac44d64926cdb7b7c7ea369e924cadfbdb5ab372d7e7d8302b4128bb2f133b",
@@ -3314,8 +3303,8 @@
     "backend/tests/test_plc_architecture.py": "784729e640a7e5659d4dbda86c3392e2677fd2a40e716275e02e90be2e51f176",
     "backend/tests/test_plc_compiler_contract.py": "5d121b70ccec1d23033163f4f1e33491fb031797d3afc839331fd705f1b8d40e",
     "backend/tests/test_plc_config_source.py": "f64249807a768b1d662d897ba9e4567d2d0e2040a3dd87993bd115969d39508b",
-    "backend/tests/test_plc_cylinder_io.py": "f78e4bae1f24a4ac2a302bda4a29ac76abe88d6195545c04c8888e2aa31f2632",
-    "backend/tests/test_plc_cylinder_source.py": "40f1603c4f46f6cd0f0104210dc25b6b0466dc62810b7fa2e2b7be2075fc9cec",
+    "backend/tests/test_plc_cylinder_io.py": "aa3cd8a4384d2e6b182a48bd1eef788566d445e97b7fe887deb6d047defbe98f",
+    "backend/tests/test_plc_cylinder_source.py": "b7ec6617642eeda3def3e9919b3c9198401a63f60a8fde9a932dfb7b152a3f7e",
     "backend/tests/test_plc_motion_source.py": "593e2d6a541d76176e07789258c9b29a7ea596fdb182b0ddcb6da5fb2ace068d",
     "backend/tests/test_plc_runtime_source.py": "84b0e829f651a47ff26275679894d35b06ff67eb05e17bce5bafb75a497fd37b",
     "backend/tests/test_plc_tool_paths.py": "e508630d612d6ba14508c2b6919c4af3972513f211834ec5d26eb1036bed1ca5",
@@ -3340,11 +3329,12 @@
     "docs/整体审查.md": "eab6a26b36325599c70b65802da6933ceeeaf7e4da8221686a2cf26346824934",
     "docs/机器人轴接口.md": "ec030e2735521e3d62b2ffd234cd72a6ab9527cca8032f39e34cf439787eb7e0",
     "docs/架构审查与整合规划.md": "3b4ffa109a14fff47dcfdb6f52c5e931284aea04d5c9f8723cd0e44b5c0489f3",
-    "docs/气缸配置与业务接口.md": "f2673acea333a3de67fa1027e8841f9d14797f8965297f8ed68660d5359e4f0a",
+    "docs/气缸配置与业务接口.md": "30b734b159f8a48fe2cd4a62f5d770d53b06111f8b48279295c501db33aba057",
+    "docs/硬件IO对照表.md": "f1cd3edcd8034191f6f045ccd119ba5fc56677ea5e79ca482d4776d484a31cc5",
     "plc/README.md": "a7b9f7c82c51fe692e5bbdc0bc66ededec5591ef22ff3221d4b98add8c41f1c5",
-    "plc/evidence/architecture-build-status.json": "ebb8419857639a336d57c0bae61ae145dab606044194f7b9441e81a12a0200f7",
-    "plc/evidence/architecture-build.txt": "d718a42f13582e1b6957f76c7a82473481dcb3d9480a2d078ebeb9460bff18cb",
-    "plc/evidence/architecture-project-verification.json": "548217663e9c9766aaa2826594312f713881e59cf824f6ab56125f97f2f6c0cb",
+    "plc/evidence/architecture-build-status.json": "e98a989883bf24c8f17bcc942dc09dedd810d9ee30210ed4eb86b5602d6ebde1",
+    "plc/evidence/architecture-build.txt": "2d80fd9620411dab6a364e4f3cb415e602aa14cb14b0fc583b0a38a267d20453",
+    "plc/evidence/architecture-project-verification.json": "d32e379eb915e50fe214c1886bca7b09b5615b01dfe6a37135a27129849b1fbf",
     "plc/evidence/axis-alarm-selftest.txt": "b72e032741f37431d9764f658f5bdf0beb3132aa3347824a53e81e04a5fa5e0f",
     "plc/evidence/axis-delivery-verify.txt": "081578dff2f82e69f7388a2c314eee8d33f7fe165f794611edf04685553ed121",
     "plc/evidence/build-status.json": "7805750b1047aba728955298f293e54c5319857dd720cca59569a1a7f637da3c",
@@ -3360,7 +3350,7 @@
     "plc/evidence/safety-fix-build-status.json": "d2b6516dcccca601ab2df30fa4194965f5bb37f20d46fc04d4cfc9098e352f3d",
     "plc/evidence/safety-fix-build.txt": "5114e01664216aa2cfc94b495ba4ed00c46c13a5a2d541a26d44c95abed88878",
     "plc/evidence/selftest-20261030-000816.txt": "8f54d5ee476a48ea073da3f4c96ccfb5c463a88725794387ebcefa1207313ede",
-    "plc/project/FM_XJV1_Cylinder_v13.project": "bf5a0d6b9add6ddc438a8be0a3e8907852984ce98216bd63d98cbfc364c6ace1",
+    "plc/project/FM_XJV1_Cylinder_v13.project": "42036f097a2ad1997b472b32a18d6078ca553fd43e30a9a82e52e08371d21e7f",
     "plc/src/application/全局变量_错误码.gvl.st": "436257e668f900e0c4e5b1a0ec1ee75f7d3295b0ec23d12abcfb1c4dc2ae3dd8",
     "plc/src/application/函数_动作许可.st": "f194c05395c7e705f4f5594440d5d319d8edf01d808209e1f3189da818e4c1e8",
     "plc/src/application/功能块_暂停恢复.st": "4d2a9d962287ada5b5f4294053cab18168d8b20376ea06684560c0a8ea16dafe",
@@ -3398,21 +3388,21 @@
     "plc/src/cylinder/功能块_气缸调度.st": "c856a0ba06af076b5c51a82262b5b02d1fb3f55d9c37dff2397798165f548157",
     "plc/src/cylinder/气缸_提交.st": "bb6f7e0e3e4ad460b2a5670ecd1b345c4c242b6cc79066b00fc043df72b64c68",
     "plc/src/cylinder/气缸_配置有效.st": "6b535b3b5135e7aa9eec1404efc78a9f54ec10c504fb10238a9697fb93668c44",
-    "plc/src/cylinder/结构体_Cy气缸配置.st": "5abc502f0afc30f5bb1c12c734aa21cddab1b0d29efba31c4dc76401e4a1865d",
+    "plc/src/cylinder/结构体_Cy气缸配置.st": "45f41446ee5085a9c96a3c3aba2e4b197a3062a4ca9acdfafd6aa93bf19d26dd",
     "plc/src/cylinder/结构体_Cy状态.st": "5c31a358968b4e5326bb6ca24fee7a04c75369fb03c08246103611686be00cb6",
     "plc/src/cylinder/结构体_Cy设备.st": "333555053d54162b7956f5c6a56c03e4fa65cec8d69466b366c46588ea894155",
     "plc/src/cylinder/结构体_气缸状态.st": "625786c6116bf70a39376a2d6ac185d50a42238df3f2705dffa121ca26569ae3",
     "plc/src/cylinder/结构体_气缸请求.st": "dc375c21003f9412b787e1d33a0ec83a746c7f780ed40a3355ff40803a809f69",
-    "plc/src/entry/程序_主循环.st": "13afee4ad1cf410c2740a21a1d673ff76a865619b0b71a6da3cb50345a795034",
+    "plc/src/entry/程序_主循环.st": "08a3a75d319e4763ddeb88add0726b6db23d60afda4d453f037fe8d19af51e78",
     "plc/src/hardware/全局变量_气缸IO映像.gvl.st": "3c504940dd2b77ef17ed01c5173b355fb562ec6cb6a3a0d6e6206e58425fa2f1",
-    "plc/src/hardware/全局变量_气缸工程.gvl.st": "46193e5b47b537c330f2f64393be84af80ea03bad39541cea385d618fd073149",
-    "plc/src/hardware/全局变量_物理IO.gvl.st": "84e4c82c7a496ac2b0460f72e45da03da3ddaeedad826ad7ce0779b89090abb6",
+    "plc/src/hardware/全局变量_气缸工程.gvl.st": "5a5652b6c14b6c78d58bc4383bee3d9a05c567a3401f62f9d70c35a462d7b20d",
+    "plc/src/hardware/全局变量_物理IO.gvl.st": "3d699ec524e302668ff8a73984d4c1287699e0b17439c1d97ed4ea076857746b",
     "plc/src/hardware/全局变量_硬件.gvl.st": "94811b18236ccb5144eaa97272b15ddda6093cd031618a6c2cb0ba2886855bf7",
     "plc/src/hardware/全局变量_绑定.gvl.st": "7f59f02fb39537079f9687e817efa49efc3ead14c620597569f286676dafcc84",
-    "plc/src/hardware/全局变量_运行配置.gvl.st": "b6b33e2f9ba700264400df22ed3fbc713f53112e64be19b9b124bff94d239352",
+    "plc/src/hardware/全局变量_运行配置.gvl.st": "3dcd217df66f27fa6000a5d9822995468477e4000ebbf1c9fc70ae95bbadc3c1",
     "plc/src/hardware/程序_气缸绑定.st": "2e4bd47652feb10a93c03c93e63fc56c62c40cea66ecf98485a81baace4f07aa",
-    "plc/src/hardware/程序_气缸输入映射.st": "dfbb9abd844e9a2a251b17a22e1cb3e407407999ab6e1c34e76465376a2336a8",
-    "plc/src/hardware/程序_气缸输出映射.st": "956c57749180c685a209d632e6c1c32a1041550ea325151e3e8dd842a6d08924",
+    "plc/src/hardware/程序_气缸输入映射.st": "11352587b613e69413b916f609c86c22be76a75fe64e9bf6c6162cfa76b44ac2",
+    "plc/src/hardware/程序_气缸输出映射.st": "2209b25769f080f0e5178e120482659076f3e73399443692e12e85ee5a4473ac",
     "plc/src/motion/Axis_Home.st": "d9ec702507eb83faf4af1221af4568f0508989ced0ed1acf03ce5f13ea706bf1",
     "plc/src/motion/Axis_MoveToPoint.st": "a183a433c1a12c036a20dabbc7dbb1dc71ff3fd1c0923595634a4a04339f0fdb",
     "plc/src/motion/Axis_Stop.st": "3c13ea2a993e2a9fc0a034f5e5f7764e03bbc24d4d9126359790a33bc385cde1",

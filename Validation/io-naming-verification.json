@@ -1,0 +1,22 @@
+{
+  "python_tests": {
+    "status": "passed",
+    "evidence": "Validation/io-naming-python-tests.json"
+  },
+  "frontend_tests": {
+    "status": "not_run"
+  },
+  "protocol_check": {
+    "status": "passed",
+    "evidence": "Validation/io-naming-protocol.json"
+  },
+  "source_smoke": {
+    "status": "not_run"
+  },
+  "packaged_smoke": {
+    "status": "not_run"
+  },
+  "real_plc_acceptance": {
+    "status": "not_run"
+  }
+}

@@ -63,15 +63,9 @@ UPDATED 功能块_轴请求监视
 UPDATED 结构体_Axis状态
 UPDATED 结构体_轴状态
 UPDATED 结构体_轴请求
-REMOVED STALE Axis_Busy
-REMOVED STALE Axis_Done
-REMOVED STALE Axis_Error
-REMOVED EMPTY FOLDER 01_类型
-REMOVED EMPTY FOLDER 02_全局变量
-REMOVED EMPTY FOLDER 03_功能块
-REMOVED EMPTY FOLDER 04_函数
-REMOVED EMPTY FOLDER 05_程序
-REMOVED EMPTY FOLDER XJV1
+REMOVED STALE 全局变量_气缸IO点
+REMOVED STALE 程序_气缸直连输入
+REMOVED STALE 程序_气缸直连输出
 SOURCE FOLDER SRC_application
 SOURCE FOLDER SRC_communication
 SOURCE FOLDER SRC_configuration
@@ -93,14 +87,14 @@ CODE GENERATION CATEGORY 97f48d64-a2a3-4856-b640-75c046e37ea9
 生成全局初始化...
 生成代码初始化...
 生成重定位...
-生成代码的大小:  1406640 字节
-全局数据的大小: 302261 字节
-为代码和数据分配的总内存大小: 1687020 字节
+生成代码的大小:  1406318 字节
+全局数据的大小: 302206 字节
+为代码和数据分配的总内存大小: 1686700 字节
 内存区域0包含 输入, 输出 和 不安全行为：大小：1048576字节，最高使用的地址：288200，最大连续存储器间隙：760376字节（72％）
 内存区域1包含 保留数据：大小：4096字节，最高使用的地址：2584，最大连续存储器间隙：1512字节（36％）
 内存区域2包含 持久性数据：大小：22144字节，最高使用的地址：18448，最大连续存储器间隙：3696字节（16％）
-内存区域3包含 代码：大小：1828632字节，最高使用的地址：1406640，最大连续存储器间隙：421992字节（23％）
+内存区域3包含 代码：大小：1828216字节，最高使用的地址：1406320，最大连续存储器间隙：421896字节（23％）
 内存区域4包含 内存：大小：262144字节，最高使用的地址：262144，最大连续存储器间隙：0字节（0％）
 内存区域5包含 数据：大小：1048576字节，最高使用的地址：280380，最大连续存储器间隙：768196字节（73％）
 构建完整--0错误,0警告：准备下载
-ACCEPTED C:\Users\Admin\Downloads\PLC_I-main (1)\PLC_I-main\artifacts\plc-probe\clean-build-1\FM_XJV1_rebuilt.project
+ACCEPTED C:\Users\Admin\Desktop\PLC_I-main\artifacts\plc-probe\simple-direct-build\FM_XJV1_rebuilt.project
